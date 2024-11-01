@@ -7188,7 +7188,7 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return this.url;
     },
     uiVersion() {
-      return "0.0.0";
+      return "0.1.0";
     },
     uiBuild() {
       return "dev";
@@ -9726,6 +9726,10 @@ const _sfc_main$L = {
     const newMode = ref(config.controller_mode);
     const newTemperature = ref(config.target_temperature);
     const modeOptions = ref([{ label: "Off", value: "o" }]);
+    const { pid_mode } = storeToRefs(status);
+    watch(pid_mode, () => {
+      newMode.value = pid_mode;
+    });
     onMounted(() => {
       if (config.enable_cooling || config.enable_heating) {
         if (config.beer_sensor_id.length || config.fride_sensor_id.length) {
@@ -9870,9 +9874,9 @@ const _sfc_main$K = {
     });
     const mode = computed(() => {
       if (status.pid_mode == "f")
-        return "Chamber constant, target: " + status.pid_fridge_target_temp + "°" + config.temp_format;
+        return "Chamber constant, target " + status.pid_fridge_target_temp + "°" + config.temp_format;
       if (status.pid_mode == "b")
-        return "Beer constant, target: " + status.pid_beer_target_temp + "°" + config.temp_format;
+        return "Beer constant, target " + status.pid_beer_target_temp + "°" + config.temp_format;
       return "Off";
     });
     return (_ctx, _cache) => {
@@ -10237,7 +10241,7 @@ const _sfc_main$H = {
       } catch (e) {
         logError("PidDataFragment::dataFormatted()", e);
       }
-      return "";
+      return "Fetching data...";
     });
     onMounted(() => {
       load();
