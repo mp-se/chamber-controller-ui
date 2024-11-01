@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-md-9">
           <BsInputText
-            v-model="config.http_get"
+            v-model="config.http_get_target"
             type="url"
             maxlength="120"
             label="Http Get URL"
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-9">
           <BsInputText
-            v-model="config.http_get_h1"
+            v-model="config.http_get_header1"
             maxlength="120"
             pattern="(.+): (.+)"
             label="Http Post Header #1"
@@ -46,7 +46,7 @@
         </div>
         <div class="col-md-9">
           <BsInputText
-            v-model="config.http_get_h2"
+            v-model="config.http_get_header2"
             maxlength="120"
             pattern="(.+): (.+)"
             label="Http Post Header #2"

@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-md-12">
           <BsInputText
-            v-model="config.influxdb2_push"
+            v-model="config.influxdb2_target"
             type="url"
             maxlength="120"
             label="Server"
@@ -38,7 +38,7 @@
           <BsInputText
             v-model="config.influxdb2_token"
             type="password"
-            maxlength="50"
+            maxlength="100"
             label="Authentication token"
             help="Authentication token for accessing data bucket"
             :disabled="global.disabled"
