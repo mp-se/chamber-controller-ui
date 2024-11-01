@@ -16,18 +16,22 @@ export const useConfigStore = defineStore('config', {
       wifi_pass: '',
       wifi_pass2: '',
       push_timeout: 0,
-      http_post: '',
-      http_post_h1: '',
-      http_post_h2: '',
-      http_get: '',
-      http_get_h1: '',
-      http_get_h2: '',
-      influxdb2_push: '',
-      influxdb2_org: '',
+
+      http_post_target: '',
+      http_post_header1: '',
+      http_post_header2: '',
+      http_post2_target: '',
+      http_post2_header1: '',
+      http_post2_header2: '',
+      http_get_target: '',
+      http_get_header1: '',
+      http_get_header2: '',
+      influxdb2_target: '',
       influxdb2_bucket: '',
-      influxdb2_auth: '',
-      mqtt_push: '',
-      mqtt_port: '',
+      influxdb2_org: '',
+      influxdb2_token: '',
+      mqtt_target: '',
+      mqtt_port: 0,
       mqtt_user: '',
       mqtt_pass: '',
       dark_mode: false,
@@ -61,18 +65,20 @@ export const useConfigStore = defineStore('config', {
           this.wifi_pass = json.wifi_pass
           this.wifi_pass2 = json.wifi_pass2
           this.push_timeout = json.push_timeout
-          this.skip_ssl_on_test = json.skip_ssl_on_test
-          this.http_post = json.http_post
-          this.http_post_h1 = json.http_post_h1
-          this.http_post_h2 = json.http_post_h2
-          this.http_get = json.http_get
-          this.http_get_h1 = json.http_get_h1
-          this.http_get_h2 = json.http_get_h2
-          this.influxdb2_push = json.influxdb2_push
+          this.http_post_target = json.http_post_target
+          this.http_post_header1 = json.http_post_header1
+          this.http_post_header2 = json.http_post_header2
+          this.http_post2_target = json.http_post2_target
+          this.http_post2_header1 = json.http_post2_header1
+          this.http_post2_header2 = json.http_post2_header2
+          this.http_get_target = json.http_get_target
+          this.http_get_header1 = json.http_get_header1
+          this.http_get_header2 = json.http_get_header1
+          this.influxdb2_target = json.influxdb2_target
           this.influxdb2_bucket = json.influxdb2_bucket
           this.influxdb2_org = json.influxdb2_org
-          this.influxdb2_auth = json.influxdb2_auth
-          this.mqtt_push = json.mqtt_push
+          this.influxdb2_token = json.influxdb2_token
+          this.mqtt_target = json.mqtt_target
           this.mqtt_port = json.mqtt_port
           this.mqtt_user = json.mqtt_user
           this.mqtt_pass = json.mqtt_pass

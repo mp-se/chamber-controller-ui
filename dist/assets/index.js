@@ -7316,18 +7316,21 @@ const useConfigStore = /* @__PURE__ */ defineStore("config", {
       wifi_pass: "",
       wifi_pass2: "",
       push_timeout: 0,
-      http_post: "",
-      http_post_h1: "",
-      http_post_h2: "",
-      http_get: "",
-      http_get_h1: "",
-      http_get_h2: "",
-      influxdb2_push: "",
-      influxdb2_org: "",
+      http_post_target: "",
+      http_post_header1: "",
+      http_post_header2: "",
+      http_post2_target: "",
+      http_post2_header1: "",
+      http_post2_header2: "",
+      http_get_target: "",
+      http_get_header1: "",
+      http_get_header2: "",
+      influxdb2_target: "",
       influxdb2_bucket: "",
-      influxdb2_auth: "",
-      mqtt_push: "",
-      mqtt_port: "",
+      influxdb2_org: "",
+      influxdb2_token: "",
+      mqtt_target: "",
+      mqtt_port: 0,
       mqtt_user: "",
       mqtt_pass: "",
       dark_mode: false,
@@ -7358,18 +7361,20 @@ const useConfigStore = /* @__PURE__ */ defineStore("config", {
         this.wifi_pass = json.wifi_pass;
         this.wifi_pass2 = json.wifi_pass2;
         this.push_timeout = json.push_timeout;
-        this.skip_ssl_on_test = json.skip_ssl_on_test;
-        this.http_post = json.http_post;
-        this.http_post_h1 = json.http_post_h1;
-        this.http_post_h2 = json.http_post_h2;
-        this.http_get = json.http_get;
-        this.http_get_h1 = json.http_get_h1;
-        this.http_get_h2 = json.http_get_h2;
-        this.influxdb2_push = json.influxdb2_push;
+        this.http_post_target = json.http_post_target;
+        this.http_post_header1 = json.http_post_header1;
+        this.http_post_header2 = json.http_post_header2;
+        this.http_post2_target = json.http_post2_target;
+        this.http_post2_header1 = json.http_post2_header1;
+        this.http_post2_header2 = json.http_post2_header2;
+        this.http_get_target = json.http_get_target;
+        this.http_get_header1 = json.http_get_header1;
+        this.http_get_header2 = json.http_get_header1;
+        this.influxdb2_target = json.influxdb2_target;
         this.influxdb2_bucket = json.influxdb2_bucket;
         this.influxdb2_org = json.influxdb2_org;
-        this.influxdb2_auth = json.influxdb2_auth;
-        this.mqtt_push = json.mqtt_push;
+        this.influxdb2_token = json.influxdb2_token;
+        this.mqtt_target = json.mqtt_target;
         this.mqtt_port = json.mqtt_port;
         this.mqtt_user = json.mqtt_user;
         this.mqtt_pass = json.mqtt_pass;
@@ -10665,8 +10670,8 @@ const _sfc_main$D = {
           createBaseVNode("div", _hoisted_2$m, [
             createBaseVNode("div", _hoisted_3$h, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).http_post,
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).http_post = $event),
+                modelValue: unref(config).http_post_target,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).http_post_target = $event),
                 type: "url",
                 maxlength: "120",
                 label: "Http Post URL",
@@ -10685,8 +10690,8 @@ const _sfc_main$D = {
             ]),
             createBaseVNode("div", _hoisted_5$b, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).http_post_h1,
-                "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => unref(config).http_post_h1 = $event),
+                modelValue: unref(config).http_post_header1,
+                "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => unref(config).http_post_header1 = $event),
                 maxlength: "120",
                 pattern: "(.+): (.+)",
                 label: "Http Post Header #1",
@@ -10705,8 +10710,8 @@ const _sfc_main$D = {
             ]),
             createBaseVNode("div", _hoisted_7$a, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).http_post_h2,
-                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(config).http_post_h2 = $event),
+                modelValue: unref(config).http_post_header2,
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(config).http_post_header2 = $event),
                 maxlength: "120",
                 pattern: "(.+): (.+)",
                 label: "Http Post Header #2",
@@ -10792,8 +10797,8 @@ const _sfc_main$C = {
           createBaseVNode("div", _hoisted_2$l, [
             createBaseVNode("div", _hoisted_3$g, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).http_get,
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).http_get = $event),
+                modelValue: unref(config).http_get_target,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).http_get_target = $event),
                 type: "url",
                 maxlength: "120",
                 label: "Http Get URL",
@@ -10812,8 +10817,8 @@ const _sfc_main$C = {
             ]),
             createBaseVNode("div", _hoisted_5$a, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).http_get_h1,
-                "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => unref(config).http_get_h1 = $event),
+                modelValue: unref(config).http_get_header1,
+                "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => unref(config).http_get_header1 = $event),
                 maxlength: "120",
                 pattern: "(.+): (.+)",
                 label: "Http Post Header #1",
@@ -10832,8 +10837,8 @@ const _sfc_main$C = {
             ]),
             createBaseVNode("div", _hoisted_7$9, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).http_get_h2,
-                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(config).http_get_h2 = $event),
+                modelValue: unref(config).http_get_header2,
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(config).http_get_header2 = $event),
                 maxlength: "120",
                 pattern: "(.+): (.+)",
                 label: "Http Post Header #2",
@@ -10907,8 +10912,8 @@ const _sfc_main$B = {
           createBaseVNode("div", _hoisted_2$k, [
             createBaseVNode("div", _hoisted_3$f, [
               createVNode(_component_BsInputText, {
-                modelValue: unref(config).influxdb2_push,
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).influxdb2_push = $event),
+                modelValue: unref(config).influxdb2_target,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).influxdb2_target = $event),
                 type: "url",
                 maxlength: "120",
                 label: "Server",
@@ -10941,7 +10946,7 @@ const _sfc_main$B = {
                 modelValue: unref(config).influxdb2_token,
                 "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(config).influxdb2_token = $event),
                 type: "password",
-                maxlength: "50",
+                maxlength: "100",
                 label: "Authentication token",
                 help: "Authentication token for accessing data bucket",
                 disabled: unref(global$1).disabled
