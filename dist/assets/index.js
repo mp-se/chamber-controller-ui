@@ -7230,12 +7230,14 @@ const useStatusStore = /* @__PURE__ */ defineStore("status", {
       pid_state: 0,
       pid_state_string: "",
       pid_beer_temp: 0,
+      pid_beer_temp_connected: false,
       pid_fridge_temp: 0,
+      pid_fridge_temp_connected: false,
       pid_beer_target_temp: 0,
       pid_fridge_target_temp: 0,
       pid_temp_format: "",
-      pid_cooling_actuator: false,
-      pid_heating_actuator: false,
+      pid_cooling_actuator_active: false,
+      pid_heating_actuator_active: false,
       pid_wait_time: 0,
       pid_time_since_cooling: 0,
       pid_time_since_heating: 0,
@@ -7267,12 +7269,14 @@ const useStatusStore = /* @__PURE__ */ defineStore("status", {
         this.pid_state = json.pid_state;
         this.pid_state_string = json.pid_state_string;
         this.pid_beer_temp = json.pid_beer_temp;
+        this.pid_beer_temp_connected = json.pid_beer_temp_connected;
         this.pid_fridge_temp = json.pid_fridge_temp;
+        this.pid_fridge_temp_connected = json.pid_fridge_temp_connected;
         this.pid_beer_target_temp = json.pid_beer_target_temp;
         this.pid_fridge_target_temp = json.pid_fridge_target_temp;
         this.pid_temp_format = json.pid_temp_format;
-        this.pid_cooling_actuator = json.pid_cooling_actuator;
-        this.pid_heating_actuator = json.pid_heating_actuator;
+        this.pid_cooling_actuator_active = json.pid_cooling_actuator_active;
+        this.pid_heating_actuator_active = json.pid_heating_actuator_active;
         this.pid_wait_time = json.pid_wait_time;
         this.pid_time_since_cooling = json.pid_time_since_cooling;
         this.pid_time_since_heating = json.pid_time_since_heating;
@@ -7334,7 +7338,7 @@ const useConfigStore = /* @__PURE__ */ defineStore("config", {
       mqtt_user: "",
       mqtt_pass: "",
       dark_mode: false,
-      fride_sensor_id: "",
+      fridge_sensor_id: "",
       beer_sensor_id: "",
       controller_mode: "o",
       target_temperature: 0,
@@ -7379,7 +7383,7 @@ const useConfigStore = /* @__PURE__ */ defineStore("config", {
         this.mqtt_user = json.mqtt_user;
         this.mqtt_pass = json.mqtt_pass;
         this.dark_mode = json.dark_mode;
-        this.fride_sensor_id = json.fride_sensor_id;
+        this.fridge_sensor_id = json.fridge_sensor_id;
         this.beer_sensor_id = json.beer_sensor_id;
         this.controller_mode = json.controller_mode;
         this.target_temperature = json.target_temperature;
@@ -9740,7 +9744,7 @@ const _sfc_main$L = {
         if (config.beer_sensor_id.length || config.fride_sensor_id.length) {
           if (config.beer_sensor_id.length)
             modeOptions.value.push({ label: "Beer constant", value: "b" });
-          if (config.fride_sensor_id.length)
+          if (config.fridge_sensor_id.length)
             modeOptions.value.push({ label: "Chamber constant", value: "f" });
         } else {
           global$1.messageError = "No sensors are configured, control is not possible";
@@ -9817,7 +9821,7 @@ const _sfc_main$L = {
                     class: "btn btn-primary",
                     style: { "height": "100px", "width": "100px" },
                     disabled: unref(global$1).disabled || modeOptions.value.length == 1
-                  }, "Set ", 8, _hoisted_9$e)
+                  }, " Set ", 8, _hoisted_9$e)
                 ])
               ])
             ])
@@ -9845,18 +9849,18 @@ const _sfc_main$K = {
   __name: "PidTemperatureFragment",
   setup(__props) {
     const beerTemp = computed(() => {
-      if (config.beer_sensor_id == "") return "--°" + config.temp_format;
+      if (!status.pid_beer_temp_connected) return "--°" + config.temp_format;
       return status.pid_beer_temp + "°" + config.temp_format;
     });
     const fridgeTemp = computed(() => {
-      if (config.fride_sensor_id == "") return "--°" + config.temp_format;
+      if (!status.pid_fridge_temp_connected) return "--°" + config.temp_format;
       return status.pid_fridge_temp + "°" + config.temp_format;
     });
     const state = computed(() => {
       switch (status.pid_state) {
         case 0:
           return "Idle for " + formatTime(
-            status.pid_time_since_cooling < status.pid_time_since_heating ? status.pid_time_since_cooling : status.pid_time_since_heating
+            status.pid_time_since_cooling < status.pid_time_since_heating ? status.pid_time_since_heating : status.pid_time_since_cooling
           );
         case 1:
           return "Off";
@@ -10028,7 +10032,7 @@ const _sfc_main$J = {
                 title: "Platform"
               }, {
                 default: withCtx(() => [
-                  createBaseVNode("p", _hoisted_15$4, toDisplayString(unref(status).platform), 1)
+                  createBaseVNode("p", _hoisted_15$4, toDisplayString(unref(status).platform) + " (ID: " + toDisplayString(unref(status).id) + ")", 1)
                 ]),
                 _: 1
               })
@@ -10301,7 +10305,7 @@ const _sfc_main$G = {
       return openBlock(), createElementBlock("div", _hoisted_1$t, [
         _cache[0] || (_cache[0] = createBaseVNode("p", null, null, -1)),
         _cache[1] || (_cache[1] = createBaseVNode("p", { class: "h2" }, "Device - PID Controller Data", -1)),
-        _cache[2] || (_cache[2] = createBaseVNode("p", null, "This page shows the internal data structures of the BrewPi Controller. Can be used for troubleshooting.", -1)),
+        _cache[2] || (_cache[2] = createBaseVNode("p", null, " This page shows the internal data structures of the BrewPi Controller. Can be used for troubleshooting. ", -1)),
         _cache[3] || (_cache[3] = createBaseVNode("hr", null, null, -1)),
         createVNode(_sfc_main$H, { source: "cc" }),
         _cache[4] || (_cache[4] = createBaseVNode("hr", null, null, -1)),
@@ -10327,15 +10331,22 @@ const _hoisted_10$a = ["hidden"];
 const _sfc_main$F = {
   __name: "DeviceHardwareView",
   setup(__props) {
-    const sensorOptions = ref([{ label: "- disabled -", value: "" }]);
+    const sensorOptions = ref([{ label: "- not selected -", value: "" }]);
     onMounted(() => {
       global$1.disabled = true;
       config.runSensorScan((success, data) => {
         if (success) {
           logDebug("DeviceHardwareView::onMounted()", data);
+          var fridge = false, beer = false;
           for (var s in data.sensors) {
+            if (s == config.beer_sensor_id) beer = true;
+            if (s == config.fridge_sensor_id) fridge = true;
             sensorOptions.value.push({ label: data.sensors[s], value: data.sensors[s] });
           }
+          if (!beer)
+            sensorOptions.value.push({ label: config.beer_sensor_id + " (not detected)", value: config.beer_sensor_id });
+          if (!fridge)
+            sensorOptions.value.push({ label: config.fridge_sensor_id + " (not detected)", value: config.fridge_sensor_id });
         }
         global$1.disabled = false;
       });
@@ -10359,8 +10370,8 @@ const _sfc_main$F = {
           createBaseVNode("div", _hoisted_2$o, [
             createBaseVNode("div", _hoisted_3$j, [
               createVNode(_component_BsSelect, {
-                modelValue: unref(config).fride_sensor_id,
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).fride_sensor_id = $event),
+                modelValue: unref(config).fridge_sensor_id,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => unref(config).fridge_sensor_id = $event),
                 label: "Chamber Sensor",
                 options: sensorOptions.value,
                 disabled: unref(global$1).disabled

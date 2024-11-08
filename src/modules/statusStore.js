@@ -26,12 +26,14 @@ export const useStatusStore = defineStore('status', {
       pid_state: 0,
       pid_state_string: '',
       pid_beer_temp: 0,
+      pid_beer_temp_connected: false,
       pid_fridge_temp: 0,
+      pid_fridge_temp_connected: false,
       pid_beer_target_temp: 0,
       pid_fridge_target_temp: 0,
       pid_temp_format: '',
-      pid_cooling_actuator: false,
-      pid_heating_actuator: false,
+      pid_cooling_actuator_active: false,
+      pid_heating_actuator_active: false,
       pid_wait_time: 0,
       pid_time_since_cooling: 0,
       pid_time_since_heating: 0,
@@ -67,13 +69,15 @@ export const useStatusStore = defineStore('status', {
           this.pid_state = json.pid_state
           this.pid_state_string = json.pid_state_string
           this.pid_beer_temp = json.pid_beer_temp
+          this.pid_beer_temp_connected = json.pid_beer_temp_connected
           this.pid_fridge_temp = json.pid_fridge_temp
+          this.pid_fridge_temp_connected = json.pid_fridge_temp_connected
           this.pid_beer_target_temp = json.pid_beer_target_temp
 
           this.pid_fridge_target_temp = json.pid_fridge_target_temp
           this.pid_temp_format = json.pid_temp_format
-          this.pid_cooling_actuator = json.pid_cooling_actuator
-          this.pid_heating_actuator = json.pid_heating_actuator
+          this.pid_cooling_actuator_active = json.pid_cooling_actuator_active
+          this.pid_heating_actuator_active = json.pid_heating_actuator_active
           this.pid_wait_time = json.pid_wait_time
           this.pid_time_since_cooling = json.pid_time_since_cooling
           this.pid_time_since_heating = json.pid_time_since_heating

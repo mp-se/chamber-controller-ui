@@ -28,15 +28,16 @@
           </div>
           <div class="col-md-4 text-center align-self-center justify-content-center">
             <div class="row">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              style="height: 100px; width: 100px"
-              :disabled="global.disabled || modeOptions.length == 1"
-            >Set
-            </button>
-          </div>  
-        </div>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="height: 100px; width: 100px"
+                :disabled="global.disabled || modeOptions.length == 1"
+              >
+                Set
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -70,7 +71,7 @@ onMounted(() => {
       if (config.beer_sensor_id.length)
         modeOptions.value.push({ label: 'Beer constant', value: 'b' })
 
-      if (config.fride_sensor_id.length)
+      if (config.fridge_sensor_id.length)
         modeOptions.value.push({ label: 'Chamber constant', value: 'f' })
     } else {
       global.messageError = 'No sensors are configured, control is not possible'

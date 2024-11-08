@@ -36,13 +36,13 @@ const dataSource = computed(() => {
 })
 
 const dataFormatted = computed(() => {
-  try { 
-//    return JSON.stringify(JSON.parse(data.value), null, 2) 
-    return JSON.stringify(data.value, null, 2) 
-} catch(e) { 
-    logError("PidDataFragment::dataFormatted()", e)
+  try {
+    //    return JSON.stringify(JSON.parse(data.value), null, 2)
+    return JSON.stringify(data.value, null, 2)
+  } catch (e) {
+    logError('PidDataFragment::dataFormatted()', e)
   }
-  return "Fetching data..."
+  return 'Fetching data...'
 })
 
 onMounted(() => {

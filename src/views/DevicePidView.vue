@@ -2,7 +2,10 @@
   <div class="container">
     <p></p>
     <p class="h2">Device - PID Controller Data</p>
-    <p>This page shows the internal data structures of the BrewPi Controller. Can be used for troubleshooting.</p>
+    <p>
+      This page shows the internal data structures of the BrewPi Controller. Can be used for
+      troubleshooting.
+    </p>
     <hr />
     <PidDataFragment source="cc"></PidDataFragment>
     <hr />

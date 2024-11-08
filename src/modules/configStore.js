@@ -36,7 +36,7 @@ export const useConfigStore = defineStore('config', {
       mqtt_pass: '',
       dark_mode: false,
 
-      fride_sensor_id: '',
+      fridge_sensor_id: '',
       beer_sensor_id: '',
       controller_mode: 'o',
       target_temperature: 0,
@@ -84,7 +84,7 @@ export const useConfigStore = defineStore('config', {
           this.mqtt_pass = json.mqtt_pass
           this.dark_mode = json.dark_mode
 
-          this.fride_sensor_id = json.fride_sensor_id
+          this.fridge_sensor_id = json.fridge_sensor_id
           this.beer_sensor_id = json.beer_sensor_id
           this.controller_mode = json.controller_mode
           this.target_temperature = json.target_temperature

@@ -49,7 +49,7 @@ export var configData = {
   dark_mode: false, 
 
   // Pid related params
-  fride_sensor_id: "1",
+  fridge_sensor_id: "1",
   beer_sensor_id: "2",
   controller_mode: "f",
   target_temperature: 10.4,

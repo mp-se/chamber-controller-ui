@@ -36,12 +36,14 @@ import { status, config } from '@/modules/pinia'
 import { formatTime } from '@/modules/utils'
 
 const beerTemp = computed(() => {
-  if (config.beer_sensor_id == '') return '--' + '°' + config.temp_format
+  // if (config.beer_sensor_id == '') return '--' + '°' + config.temp_format
+  if(!status.pid_beer_temp_connected) return '--' + '°' + config.temp_format
   return status.pid_beer_temp + '°' + config.temp_format
 })
 
 const fridgeTemp = computed(() => {
-  if (config.fride_sensor_id == '') return '--' + '°' + config.temp_format
+  // if (config.fridge_sensor_id == '') return '--' + '°' + config.temp_format
+  if(!status.pid_fridge_temp_connected) return '--' + '°' + config.temp_format
   return status.pid_fridge_temp + '°' + config.temp_format
 })
 
@@ -52,8 +54,8 @@ const state = computed(() => {
         'Idle for ' +
         formatTime(
           status.pid_time_since_cooling < status.pid_time_since_heating
-            ? status.pid_time_since_cooling
-            : status.pid_time_since_heating
+            ? status.pid_time_since_heating
+            : status.pid_time_since_cooling
         )
       )
 
