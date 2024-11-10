@@ -77,7 +77,7 @@ import { validateCurrentForm } from '@/modules/utils'
 import { global, config } from '@/modules/pinia'
 import { logDebug } from '@/modules/logger'
 
-const sensorOptions = ref([{ label: '- not selected -', value: "" }])
+const sensorOptions = ref([{ label: '- not selected -', value: '' }])
 
 onMounted(() => {
   global.disabled = true
@@ -85,20 +85,27 @@ onMounted(() => {
     if (success) {
       logDebug('DeviceHardwareView::onMounted()', data)
 
-      var fridge = false, beer = false
-    
+      var fridge = false,
+        beer = false
+
       for (var s in data.sensors) {
-        if(s == config.beer_sensor_id) beer = true
-        if(s == config.fridge_sensor_id) fridge = true
-        
+        if (s == config.beer_sensor_id) beer = true
+        if (s == config.fridge_sensor_id) fridge = true
+
         sensorOptions.value.push({ label: data.sensors[s], value: data.sensors[s] })
       }
 
-      if(!beer)
-        sensorOptions.value.push({ label: config.beer_sensor_id + " (not detected)", value: config.beer_sensor_id })
+      if (!beer)
+        sensorOptions.value.push({
+          label: config.beer_sensor_id + ' (not detected)',
+          value: config.beer_sensor_id
+        })
 
-      if(!fridge)
-        sensorOptions.value.push({ label: config.fridge_sensor_id + " (not detected)", value: config.fridge_sensor_id })
+      if (!fridge)
+        sensorOptions.value.push({
+          label: config.fridge_sensor_id + ' (not detected)',
+          value: config.fridge_sensor_id
+        })
     }
 
     global.disabled = false

@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card h-100">
     <div class="card-header bg-success-subtle">Controller</div>
     <div class="card-body">
       <form @submit.prevent="saveSettings" class="needs-validation" novalidate>
@@ -21,7 +21,7 @@
                 max="30"
                 step="0.1"
                 :unit="'°' + config.temp_format"
-                width="4"
+                width="6"
                 :disabled="global.disabled || modeOptions.length == 1"
               />
             </div>
@@ -53,7 +53,7 @@ import BsInputRadio from '@/components/BsInputRadio.vue'
 import BsInputNumber from '@/components/BsInputNumber.vue'
 import { storeToRefs } from 'pinia'
 
-const newMode = ref(config.controller_mode)
+const newMode = ref('o')
 const newTemperature = ref(config.target_temperature)
 
 const modeOptions = ref([{ label: 'Off', value: 'o' }])
