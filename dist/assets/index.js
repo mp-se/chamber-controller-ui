@@ -7191,7 +7191,7 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return "0.1.0";
     },
     uiBuild() {
-      return "dev";
+      return void 0;
     },
     disabled32() {
       if (this.disabled) return true;
@@ -9720,7 +9720,7 @@ const _sfc_main$M = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _hoisted_1$y = { class: "card" };
+const _hoisted_1$y = { class: "card h-100" };
 const _hoisted_2$t = { class: "card-body" };
 const _hoisted_3$o = { class: "row" };
 const _hoisted_4$m = { class: "col-md-8" };
@@ -9732,7 +9732,7 @@ const _hoisted_9$e = ["disabled"];
 const _sfc_main$L = {
   __name: "PidControllerFragment",
   setup(__props) {
-    const newMode = ref(config.controller_mode);
+    const newMode = ref("o");
     const newTemperature = ref(config.target_temperature);
     const modeOptions = ref([{ label: "Off", value: "o" }]);
     const { pid_mode } = storeToRefs(status);
@@ -9809,7 +9809,7 @@ const _sfc_main$L = {
                     max: "30",
                     step: "0.1",
                     unit: "°" + unref(config).temp_format,
-                    width: "4",
+                    width: "6",
                     disabled: unref(global$1).disabled || modeOptions.value.length == 1
                   }, null, 8, ["modelValue", "unit", "disabled"])
                 ])
@@ -9831,7 +9831,7 @@ const _sfc_main$L = {
     };
   }
 };
-const _hoisted_1$x = { class: "card" };
+const _hoisted_1$x = { class: "card h-100" };
 const _hoisted_2$s = { class: "card-body" };
 const _hoisted_3$n = { class: "row text-start" };
 const _hoisted_4$l = { class: "col-md-10" };
@@ -9860,7 +9860,7 @@ const _sfc_main$K = {
       switch (status.pid_state) {
         case 0:
           return "Idle for " + formatTime(
-            status.pid_time_since_cooling < status.pid_time_since_heating ? status.pid_time_since_heating : status.pid_time_since_cooling
+            status.pid_time_since_cooling < status.pid_time_since_heating ? status.pid_time_since_cooling : status.pid_time_since_heating
           );
         case 1:
           return "Off";
@@ -10344,9 +10344,15 @@ const _sfc_main$F = {
             sensorOptions.value.push({ label: data.sensors[s], value: data.sensors[s] });
           }
           if (!beer)
-            sensorOptions.value.push({ label: config.beer_sensor_id + " (not detected)", value: config.beer_sensor_id });
+            sensorOptions.value.push({
+              label: config.beer_sensor_id + " (not detected)",
+              value: config.beer_sensor_id
+            });
           if (!fridge)
-            sensorOptions.value.push({ label: config.fridge_sensor_id + " (not detected)", value: config.fridge_sensor_id });
+            sensorOptions.value.push({
+              label: config.fridge_sensor_id + " (not detected)",
+              value: config.fridge_sensor_id
+            });
         }
         global$1.disabled = false;
       });
