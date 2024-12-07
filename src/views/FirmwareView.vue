@@ -12,7 +12,7 @@
             <span class="badge bg-secondary">{{ status.platform }}</span>
             , Version: <span class="badge bg-secondary">{{ status.app_ver }}</span> ({{
               status.app_build
-            }}) , Hardware: <span class="badge bg-secondary">{{ status.hardware }}</span>
+            }})
           </p>
         </div>
 
