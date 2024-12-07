@@ -31,6 +31,8 @@
         </p>
       </div>
     </div>
+
+    <!-- 
     <hr />
 
     <div class="row">
@@ -74,10 +76,12 @@
       </div>
       <div class="form-text">Starts with the latest log entry first.</div>
     </div>
+-->
   </div>
 </template>
 
 <script setup>
+/*
 import { ref } from 'vue'
 import { status, config, global } from '@/modules/pinia'
 import { logDebug } from '@/modules/logger'
@@ -136,5 +140,5 @@ function removeLogs() {
       global.disabled = false
     })
   })
-}
+}*/
 </script>

@@ -67,7 +67,7 @@ watch(pid_mode, () => {
 onMounted(() => {
   // We need at least one sensor to do control
   if (config.enable_cooling || config.enable_heating) {
-    if (config.beer_sensor_id.length || config.fride_sensor_id.length) {
+    if (config.beer_sensor_id.length || config.fridge_sensor_id.length) {
       if (config.beer_sensor_id.length)
         modeOptions.value.push({ label: 'Beer constant', value: 'b' })
 

@@ -41,7 +41,8 @@ export const useConfigStore = defineStore('config', {
       controller_mode: 'o',
       target_temperature: 0,
       enable_cooling: false,
-      enable_heating: false
+      enable_heating: false,
+      invert_pins: false
     }
   },
   actions: {
@@ -90,6 +91,7 @@ export const useConfigStore = defineStore('config', {
           this.target_temperature = json.target_temperature
           this.enable_cooling = json.enable_cooling
           this.enable_heating = json.enable_heating
+          this.invert_pins = json.invert_pins
 
           callback(true)
         })

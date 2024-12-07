@@ -10,6 +10,7 @@
           <BsSelect
             v-model="config.fridge_sensor_id"
             label="Chamber Sensor"
+            help="Select the chamber sensor"
             :options="sensorOptions"
             :disabled="global.disabled"
           />
@@ -19,6 +20,7 @@
           <BsSelect
             v-model="config.beer_sensor_id"
             label="Beer Sensor"
+            help="Select the beer sensor"
             :options="sensorOptions"
             :disabled="global.disabled"
           />
@@ -28,19 +30,31 @@
           <hr />
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
           <BsInputSwitch
             v-model="config.enable_cooling"
             label="Enable Cooling"
+            help="If cooling circuit is available"
             width=""
             :disabled="global.disabled"
           ></BsInputSwitch>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
           <BsInputSwitch
             v-model="config.enable_heating"
             label="Enable Heating"
+            help="If heating circuit is available"
+            width=""
+            :disabled="global.disabled"
+          ></BsInputSwitch>
+        </div>
+
+        <div class="col-md-4">
+          <BsInputSwitch
+            v-model="config.invert_pins"
+            label="Invert pins"
+            help="If pins should be inverted"
             width=""
             :disabled="global.disabled"
           ></BsInputSwitch>
