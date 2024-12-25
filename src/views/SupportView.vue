@@ -81,9 +81,9 @@
 </template>
 
 <script setup>
+import { status, global } from '@/modules/pinia'
 /*
 import { ref } from 'vue'
-import { status, config, global } from '@/modules/pinia'
 import { logDebug } from '@/modules/logger'
 
 const logData = ref('')
