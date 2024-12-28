@@ -40,7 +40,11 @@
 
         <div class="col-md-4">
           <BsCard header="Device" title="Software version">
-            <p class="text-center">{{ status.app_ver }} ({{ status.app_build }})</p>
+            <p class="text-center">
+              Firmware: {{ status.app_ver }} ({{ status.app_build }}) UI: {{ global.uiVersion }} ({{
+                global.uiBuild
+              }})
+            </p>
           </BsCard>
         </div>
 
@@ -65,7 +69,7 @@
 
 <script setup>
 import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
-import { status } from '@/modules/pinia'
+import { status, global } from '@/modules/pinia'
 import PidControllerFragment from '@/fragments/PidControllerFragment.vue'
 import PidTemperatureFragment from '@/fragments/PidTemperatureFragment.vue'
 

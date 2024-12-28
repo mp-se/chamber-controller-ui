@@ -60,7 +60,7 @@ export var configData = {
 export var statusData = {
   id: "7376ef",
   rssi: -56,
-  app_ver: "2.0.0",
+  app_ver: "0.3.0",
   app_build: "gitrev",
   mdns: "fridge",
   platform: "esp32",
