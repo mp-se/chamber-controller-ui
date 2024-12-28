@@ -7188,10 +7188,10 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return this.url;
     },
     uiVersion() {
-      return "0.2.0";
+      return "0.3.0";
     },
     uiBuild() {
-      return "..0d7ed0";
+      return "..77474d";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -10001,7 +10001,7 @@ const _sfc_main$J = {
                 title: "Software version"
               }, {
                 default: withCtx(() => [
-                  createBaseVNode("p", _hoisted_13$4, toDisplayString(unref(status).app_ver) + " (" + toDisplayString(unref(status).app_build) + ")", 1)
+                  createBaseVNode("p", _hoisted_13$4, " Firmware: " + toDisplayString(unref(status).app_ver) + " (" + toDisplayString(unref(status).app_build) + ") UI: " + toDisplayString(unref(global$1).uiVersion) + " (" + toDisplayString(unref(global$1).uiBuild) + ") ", 1)
                 ]),
                 _: 1
               })
