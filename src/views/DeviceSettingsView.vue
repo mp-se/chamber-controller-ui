@@ -27,7 +27,7 @@
           <hr />
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <BsInputRadio
             v-model="config.temp_format"
             :options="tempOptions"
@@ -37,7 +37,7 @@
           ></BsInputRadio>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <BsInputRadio
             v-model="config.dark_mode"
             :options="uiOptions"
@@ -45,6 +45,20 @@
             width=""
             :disabled="global.disabled"
           ></BsInputRadio>
+        </div>
+
+        <div class="col-md-6">
+          <BsInputNumber
+            v-model="config.restart_interval"
+            unit="seconds"
+            label="Restart interval in minutes"
+            min="30"
+            max="1440"
+            step="1"
+            width="5"
+            help="Interval when the device will restart to ensure stability (30-1440)"
+            :disabled="global.disabled"
+          ></BsInputNumber>
         </div>
       </div>
 

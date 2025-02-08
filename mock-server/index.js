@@ -126,5 +126,5 @@ app.get('/api/pid/mt', (req, res) => {
 })
 
 app.listen(port, "localhost", () => {
-  console.log(`EspFramework API simulator port http://localhost:${port}/`)
+  console.log(`Chamber Controller API simulator port http://localhost:${port}/`)
 })

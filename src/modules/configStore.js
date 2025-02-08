@@ -9,6 +9,7 @@ export const useConfigStore = defineStore('config', {
       mdns: '',
       temp_format: '',
       ota_url: '',
+      restart_interval: 0,
       wifi_portal_timeout: 0,
       wifi_connect_timeout: 0,
       wifi_ssid: '',
@@ -59,6 +60,7 @@ export const useConfigStore = defineStore('config', {
           this.mdns = json.mdns
           this.temp_format = json.temp_format
           this.ota_url = json.ota_url
+          this.restart_interval = json.restart_interval
           this.wifi_portal_timeout = json.wifi_portal_timeout
           this.wifi_connect_timeout = json.wifi_connect_timeout
           this.wifi_ssid = json.wifi_ssid

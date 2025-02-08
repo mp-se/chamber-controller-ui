@@ -11,6 +11,7 @@ export var configData = {
   temp_format: "C",
   // Hardware
   ota_url: "",
+  restart_interval: 60,
   // Wifi
   wifi_scan_ap: true,
   wifi_portal_timeout: 120,
