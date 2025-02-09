@@ -7191,7 +7191,7 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return "0.1.1";
     },
     uiBuild() {
-      return "..2417c2";
+      return "..de3ee7";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -10149,7 +10149,7 @@ const _sfc_main$I = {
               createVNode(_component_BsInputNumber, {
                 modelValue: unref(config).restart_interval,
                 "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(config).restart_interval = $event),
-                unit: "seconds",
+                unit: "minutes",
                 label: "Restart interval in minutes",
                 min: "30",
                 max: "1440",
