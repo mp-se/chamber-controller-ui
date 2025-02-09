@@ -50,7 +50,7 @@
         <div class="col-md-6">
           <BsInputNumber
             v-model="config.restart_interval"
-            unit="seconds"
+            unit="minutes"
             label="Restart interval in minutes"
             min="30"
             max="1440"
