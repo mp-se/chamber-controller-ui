@@ -7188,10 +7188,10 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return this.url;
     },
     uiVersion() {
-      return "0.1.1";
+      return "0.3.1";
     },
     uiBuild() {
-      return "..de3ee7";
+      return "..7c8d13";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -10041,7 +10041,7 @@ const _hoisted_2$q = { class: "row" };
 const _hoisted_3$l = { class: "col-md-12" };
 const _hoisted_4$j = { class: "col-md-3" };
 const _hoisted_5$f = { class: "col-md-3" };
-const _hoisted_6$f = { class: "col-md-6" };
+const _hoisted_6$f = { class: "col-md-4" };
 const _hoisted_7$b = { class: "row gy-2" };
 const _hoisted_8$b = { class: "col-md-12" };
 const _hoisted_9$a = ["disabled"];
@@ -10060,6 +10060,15 @@ const _sfc_main$I = {
     const uiOptions = ref([
       { label: "Day mode", value: false },
       { label: "Dark mode", value: true }
+    ]);
+    const restartOptions = ref([
+      { label: "30 minutes", value: 30 },
+      { label: "1 hour", value: 60 },
+      { label: "2 hours", value: 60 * 2 },
+      { label: "4 hours", value: 60 * 4 },
+      { label: "6 hours", value: 60 * 6 },
+      { label: "12 hours", value: 60 * 12 },
+      { label: "24 hours", value: 60 * 24 }
     ]);
     const factory = () => {
       global$1.clearMessages();
@@ -10088,7 +10097,7 @@ const _sfc_main$I = {
       const _component_BsMessage = resolveComponent("BsMessage");
       const _component_BsInputText = resolveComponent("BsInputText");
       const _component_BsInputRadio = resolveComponent("BsInputRadio");
-      const _component_BsInputNumber = resolveComponent("BsInputNumber");
+      const _component_BsSelect = resolveComponent("BsSelect");
       return openBlock(), createElementBlock("div", _hoisted_1$v, [
         _cache[13] || (_cache[13] = createBaseVNode("p", null, null, -1)),
         _cache[14] || (_cache[14] = createBaseVNode("p", { class: "h2" }, "Device - Settings", -1)),
@@ -10146,18 +10155,14 @@ const _sfc_main$I = {
               }, null, 8, ["modelValue", "options", "disabled"])
             ]),
             createBaseVNode("div", _hoisted_6$f, [
-              createVNode(_component_BsInputNumber, {
+              createVNode(_component_BsSelect, {
                 modelValue: unref(config).restart_interval,
                 "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(config).restart_interval = $event),
-                unit: "minutes",
-                label: "Restart interval in minutes",
-                min: "30",
-                max: "1440",
-                step: "1",
-                width: "5",
-                help: "Interval when the device will restart to ensure stability (30-1440)",
+                label: "Restart interval",
+                help: "Interval when the device will restart to ensure stability",
+                options: restartOptions.value,
                 disabled: unref(global$1).disabled
-              }, null, 8, ["modelValue", "disabled"])
+              }, null, 8, ["modelValue", "options", "disabled"])
             ])
           ]),
           createBaseVNode("div", _hoisted_7$b, [
