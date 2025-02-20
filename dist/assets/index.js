@@ -3622,11 +3622,19 @@ const updateSlots = (instance, children, optimized) => {
     }
   }
 };
+function initFeatureFlags() {
+  if (typeof __VUE_PROD_HYDRATION_MISMATCH_DETAILS__ !== "boolean") {
+    getGlobalThis().__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
+  }
+}
 const queuePostRenderEffect = queueEffectWithSuspense;
 function createRenderer(options) {
   return baseCreateRenderer(options);
 }
 function baseCreateRenderer(options, createHydrationFns) {
+  {
+    initFeatureFlags();
+  }
   const target = getGlobalThis();
   target.__VUE__ = true;
   const {
@@ -7191,7 +7199,7 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return "0.3.1";
     },
     uiBuild() {
-      return "..7c8d13";
+      return "..5fadb3";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -9572,7 +9580,7 @@ const _hoisted_1$A = {
 };
 const _hoisted_2$v = ["value", "name", "id", "disabled"];
 const _hoisted_3$q = ["for"];
-const _sfc_main$N = /* @__PURE__ */ Object.assign({
+const _sfc_main$N = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputRadio",
@@ -9645,7 +9653,7 @@ const _hoisted_3$p = {
   key: 0,
   class: "input-group-text"
 };
-const _sfc_main$M = /* @__PURE__ */ Object.assign({
+const _sfc_main$M = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputNumber",
@@ -11781,13 +11789,6 @@ const _sfc_main$t = {
     };
   }
 };
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
-  }
-  return target;
-};
 const _sfc_main$s = {};
 const _hoisted_1$f = { class: "fw-bold" };
 function _sfc_render(_ctx, _cache) {
@@ -11804,7 +11805,7 @@ function _sfc_render(_ctx, _cache) {
     _: 1
   });
 }
-const NotFoundView = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render]]);
+_sfc_main$s.render = _sfc_render;
 const routes = [
   {
     path: "/",
@@ -11874,7 +11875,7 @@ const routes = [
   {
     path: "/:catchAll(.*)",
     name: "404",
-    component: NotFoundView
+    component: _sfc_main$s
   }
 ];
 const router = createRouter({
@@ -12346,7 +12347,7 @@ const _sfc_main$p = {
     };
   }
 };
-const _sfc_main$o = /* @__PURE__ */ Object.assign({
+const _sfc_main$o = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconXCircle",
@@ -12363,7 +12364,7 @@ const _sfc_main$o = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$n = /* @__PURE__ */ Object.assign({
+const _sfc_main$n = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconCheckCircle",
@@ -12380,7 +12381,7 @@ const _sfc_main$n = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$m = /* @__PURE__ */ Object.assign({
+const _sfc_main$m = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconInfoCircle",
@@ -12397,7 +12398,7 @@ const _sfc_main$m = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$l = /* @__PURE__ */ Object.assign({
+const _sfc_main$l = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconExclamationTriangle",
@@ -12421,7 +12422,7 @@ const _hoisted_1$b = {
   "data-bs-dismiss": "alert",
   "aria-label": "Close"
 };
-const _sfc_main$k = /* @__PURE__ */ Object.assign({
+const _sfc_main$k = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsMessage",
@@ -12488,7 +12489,7 @@ const _hoisted_1$a = { class: "card" };
 const _hoisted_2$8 = { class: "card-body" };
 const _hoisted_3$5 = { class: "card-title" };
 const _hoisted_4$3 = { class: "card-text" };
-const _sfc_main$j = /* @__PURE__ */ Object.assign({
+const _sfc_main$j = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsCard",
@@ -12543,7 +12544,7 @@ const _hoisted_1$9 = {
   role: "group"
 };
 const _hoisted_2$7 = ["disabled"];
-const _sfc_main$i = /* @__PURE__ */ Object.assign({
+const _sfc_main$i = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsFileUpload",
@@ -12624,7 +12625,7 @@ const _hoisted_3$4 = {
   class: "badge text-bg-danger rounded-circle"
 };
 const _hoisted_4$2 = { class: "form-text" };
-const _sfc_main$g = /* @__PURE__ */ Object.assign({
+const _sfc_main$g = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputBase",
@@ -12659,7 +12660,7 @@ const _sfc_main$g = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$f = /* @__PURE__ */ Object.assign({
+const _sfc_main$f = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconEyeSlash",
@@ -12677,7 +12678,7 @@ const _sfc_main$f = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$e = /* @__PURE__ */ Object.assign({
+const _sfc_main$e = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconEye",
@@ -12700,7 +12701,7 @@ const _hoisted_3$3 = {
   key: 0,
   class: "input-group-text"
 };
-const _sfc_main$d = /* @__PURE__ */ Object.assign({
+const _sfc_main$d = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputText",
@@ -12774,7 +12775,7 @@ const _sfc_main$d = /* @__PURE__ */ Object.assign({
 });
 const _hoisted_1$5 = { class: "input-group" };
 const _hoisted_2$4 = ["data-bs-title"];
-const _sfc_main$c = /* @__PURE__ */ Object.assign({
+const _sfc_main$c = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputReadonly",
@@ -12822,7 +12823,7 @@ const _sfc_main$c = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$b = /* @__PURE__ */ Object.assign({
+const _sfc_main$b = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconWifi",
@@ -12842,7 +12843,7 @@ const _sfc_main$b = /* @__PURE__ */ Object.assign({
 const _hoisted_1$4 = ["disabled"];
 const _hoisted_2$3 = ["value"];
 const _hoisted_3$2 = ["value"];
-const _sfc_main$a = /* @__PURE__ */ Object.assign({
+const _sfc_main$a = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsSelect",
@@ -12912,7 +12913,7 @@ const _sfc_main$a = /* @__PURE__ */ Object.assign({
   }
 });
 const _hoisted_1$3 = ["data-bs-title"];
-const _sfc_main$9 = /* @__PURE__ */ Object.assign({
+const _sfc_main$9 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputTextArea",
@@ -12966,7 +12967,7 @@ const _hoisted_1$2 = {
   style: { "height": "38px" }
 };
 const _hoisted_2$2 = ["disabled", "data-bs-title"];
-const _sfc_main$8 = /* @__PURE__ */ Object.assign({
+const _sfc_main$8 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputSwitch",
@@ -13026,7 +13027,7 @@ const _hoisted_1$1 = { class: "dropdown" };
 const _hoisted_2$1 = ["disabled"];
 const _hoisted_3$1 = { class: "dropdown-menu" };
 const _hoisted_4$1 = ["onClick"];
-const _sfc_main$7 = /* @__PURE__ */ Object.assign({
+const _sfc_main$7 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsDropdown",
@@ -13102,7 +13103,7 @@ const _hoisted_5 = { class: "modal-header" };
 const _hoisted_6 = { class: "modal-title fs-5" };
 const _hoisted_7 = { class: "modal-body" };
 const _hoisted_8 = { class: "modal-footer" };
-const _sfc_main$6 = /* @__PURE__ */ Object.assign({
+const _sfc_main$6 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsModalConfirm",
@@ -13165,7 +13166,7 @@ const _sfc_main$6 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$5 = /* @__PURE__ */ Object.assign({
+const _sfc_main$5 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconHome",
@@ -13181,7 +13182,7 @@ const _sfc_main$5 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$4 = /* @__PURE__ */ Object.assign({
+const _sfc_main$4 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconTools",
@@ -13197,7 +13198,7 @@ const _sfc_main$4 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$3 = /* @__PURE__ */ Object.assign({
+const _sfc_main$3 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconGraphUpArrow",
@@ -13216,7 +13217,7 @@ const _sfc_main$3 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$2 = /* @__PURE__ */ Object.assign({
+const _sfc_main$2 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconCloudUpArrow",
@@ -13236,7 +13237,7 @@ const _sfc_main$2 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main$1 = /* @__PURE__ */ Object.assign({
+const _sfc_main$1 = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconUpArrow",
@@ -13255,7 +13256,7 @@ const _sfc_main$1 = /* @__PURE__ */ Object.assign({
     };
   }
 });
-const _sfc_main = /* @__PURE__ */ Object.assign({
+const _sfc_main = Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconCpu",
