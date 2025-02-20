@@ -47,6 +47,7 @@
           ></BsInputRadio>
         </div>
 
+        <!-- 
         <div class="col-md-6">
           <BsInputNumber
             v-model="config.restart_interval"
@@ -59,7 +60,18 @@
             help="Interval when the device will restart to ensure stability (30-1440)"
             :disabled="global.disabled"
           ></BsInputNumber>
+        </div>-->
+
+        <div class="col-md-4">
+          <BsSelect
+            v-model="config.restart_interval"
+            label="Restart interval"
+            help="Interval when the device will restart to ensure stability"
+            :options="restartOptions"
+            :disabled="global.disabled"
+          />
         </div>
+
       </div>
 
       <div class="row gy-2">
@@ -131,6 +143,16 @@ const tempOptions = ref([
 const uiOptions = ref([
   { label: 'Day mode', value: false },
   { label: 'Dark mode', value: true }
+])
+
+const restartOptions = ref([
+  { label: '30 minutes', value: 30 },
+  { label: '1 hour', value: 60 },
+  { label: '2 hours', value: 60*2 },
+  { label: '4 hours', value: 60*4 },
+  { label: '6 hours', value: 60*6 },
+  { label: '12 hours', value: 60*12 },
+  { label: '24 hours', value: 60*24 },
 ])
 
 const factory = () => {
