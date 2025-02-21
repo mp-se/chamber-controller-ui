@@ -7199,7 +7199,7 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return "0.3.1";
     },
     uiBuild() {
-      return "..5fadb3";
+      return "..b48a18";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -10070,6 +10070,7 @@ const _sfc_main$I = {
       { label: "Dark mode", value: true }
     ]);
     const restartOptions = ref([
+      { label: "-- disabled --", value: 0 },
       { label: "30 minutes", value: 30 },
       { label: "1 hour", value: 60 },
       { label: "2 hours", value: 60 * 2 },
