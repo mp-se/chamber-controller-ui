@@ -52,6 +52,8 @@ export var configData = {
   // Pid related params
   fridge_sensor_id: "1",
   beer_sensor_id: "2",
+  fridge_sensor_offset: -1.01,
+  beer_sensor_offset: 2.05,
   controller_mode: "f",
   target_temperature: 10.4,
   enable_cooling: true,

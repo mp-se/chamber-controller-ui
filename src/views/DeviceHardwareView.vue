@@ -26,6 +26,30 @@
           />
         </div>
 
+        <div class="col-md-6">
+          <BsInputNumber
+            v-model="config.beer_sensor_offset"
+            label="Beer Sensor Offset"
+            help="Beer sensor offset value"
+            min="-5"
+            max="5"
+            step="0.01"
+            :disabled="global.disabled"
+          />
+        </div>
+
+        <div class="col-md-6">
+          <BsInputNumber
+            v-model="config.fridge_sensor_offset"
+            label="Fridge Sensor Offset"
+            help="Fridge sensor offset value"
+            min="-5"
+            max="5"
+            step="0.01"
+            :disabled="global.disabled"
+          />
+        </div>
+
         <div class="col-md-12">
           <hr />
         </div>
@@ -90,6 +114,7 @@ import { ref, onMounted } from 'vue'
 import { validateCurrentForm } from '@/modules/utils'
 import { global, config } from '@/modules/pinia'
 import { logDebug } from '@/modules/logger'
+import BsInputNumber from '@/components/BsInputNumber.vue'
 
 const sensorOptions = ref([{ label: '- not selected -', value: '' }])
 

@@ -71,7 +71,6 @@
             :disabled="global.disabled"
           />
         </div>
-
       </div>
 
       <div class="row gy-2">
@@ -90,8 +89,8 @@
               aria-hidden="true"
               :hidden="!global.disabled"
             ></span>
-            &nbsp;Save
-          </button>&nbsp;
+            &nbsp;Save</button
+          >&nbsp;
 
           <button
             @click="restart"
@@ -105,8 +104,8 @@
               aria-hidden="true"
               :hidden="!global.disabled"
             ></span>
-            &nbsp;Restart device
-          </button>&nbsp;
+            &nbsp;Restart device</button
+          >&nbsp;
 
           <button
             @click="factory"
@@ -149,11 +148,11 @@ const restartOptions = ref([
   { label: '-- disabled --', value: 0 },
   { label: '30 minutes', value: 30 },
   { label: '1 hour', value: 60 },
-  { label: '2 hours', value: 60*2 },
-  { label: '4 hours', value: 60*4 },
-  { label: '6 hours', value: 60*6 },
-  { label: '12 hours', value: 60*12 },
-  { label: '24 hours', value: 60*24 },
+  { label: '2 hours', value: 60 * 2 },
+  { label: '4 hours', value: 60 * 4 },
+  { label: '6 hours', value: 60 * 6 },
+  { label: '12 hours', value: 60 * 12 },
+  { label: '24 hours', value: 60 * 24 }
 ])
 
 const factory = () => {

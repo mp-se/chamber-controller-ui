@@ -39,6 +39,8 @@ export const useConfigStore = defineStore('config', {
 
       fridge_sensor_id: '',
       beer_sensor_id: '',
+      fridge_sensor_offset: 0,
+      beer_sensor_offset: 0,
       controller_mode: 'o',
       target_temperature: 0,
       enable_cooling: false,
@@ -89,6 +91,8 @@ export const useConfigStore = defineStore('config', {
 
           this.fridge_sensor_id = json.fridge_sensor_id
           this.beer_sensor_id = json.beer_sensor_id
+          this.fridge_sensor_offset = json.fridge_sensor_offset
+          this.beer_sensor_offset = json.beer_sensor_offset
           this.controller_mode = json.controller_mode
           this.target_temperature = json.target_temperature
           this.enable_cooling = json.enable_cooling
