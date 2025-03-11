@@ -3622,19 +3622,11 @@ const updateSlots = (instance, children, optimized) => {
     }
   }
 };
-function initFeatureFlags() {
-  if (typeof __VUE_PROD_HYDRATION_MISMATCH_DETAILS__ !== "boolean") {
-    getGlobalThis().__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
-  }
-}
 const queuePostRenderEffect = queueEffectWithSuspense;
 function createRenderer(options) {
   return baseCreateRenderer(options);
 }
 function baseCreateRenderer(options, createHydrationFns) {
-  {
-    initFeatureFlags();
-  }
   const target = getGlobalThis();
   target.__VUE__ = true;
   const {
@@ -7199,7 +7191,7 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return "0.3.1";
     },
     uiBuild() {
-      return "..b48a18";
+      return "..d59b7b";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -7346,6 +7338,8 @@ const useConfigStore = /* @__PURE__ */ defineStore("config", {
       dark_mode: false,
       fridge_sensor_id: "",
       beer_sensor_id: "",
+      fridge_sensor_offset: 0,
+      beer_sensor_offset: 0,
       controller_mode: "o",
       target_temperature: 0,
       enable_cooling: false,
@@ -7393,6 +7387,8 @@ const useConfigStore = /* @__PURE__ */ defineStore("config", {
         this.dark_mode = json.dark_mode;
         this.fridge_sensor_id = json.fridge_sensor_id;
         this.beer_sensor_id = json.beer_sensor_id;
+        this.fridge_sensor_offset = json.fridge_sensor_offset;
+        this.beer_sensor_offset = json.beer_sensor_offset;
         this.controller_mode = json.controller_mode;
         this.target_temperature = json.target_temperature;
         this.enable_cooling = json.enable_cooling;
@@ -9580,7 +9576,7 @@ const _hoisted_1$A = {
 };
 const _hoisted_2$v = ["value", "name", "id", "disabled"];
 const _hoisted_3$q = ["for"];
-const _sfc_main$N = Object.assign({
+const _sfc_main$N = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputRadio",
@@ -9653,7 +9649,7 @@ const _hoisted_3$p = {
   key: 0,
   class: "input-group-text"
 };
-const _sfc_main$M = Object.assign({
+const _sfc_main$M = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputNumber",
@@ -9832,8 +9828,8 @@ const _hoisted_8$d = { class: "h4" };
 const _hoisted_9$c = { class: "row text-start" };
 const _hoisted_10$c = { class: "col-md-10" };
 const _hoisted_11$8 = { class: "h4" };
-const _hoisted_12$7 = { class: "row text-start" };
-const _hoisted_13$5 = { class: "col-md-10" };
+const _hoisted_12$8 = { class: "row text-start" };
+const _hoisted_13$6 = { class: "col-md-10" };
 const _hoisted_14$4 = { class: "h4" };
 const _sfc_main$K = {
   __name: "PidTemperatureFragment",
@@ -9900,9 +9896,9 @@ const _sfc_main$K = {
               createBaseVNode("label", _hoisted_11$8, toDisplayString(beerTemp.value), 1)
             ])
           ]),
-          createBaseVNode("div", _hoisted_12$7, [
+          createBaseVNode("div", _hoisted_12$8, [
             _cache[3] || (_cache[3] = createBaseVNode("div", { class: "col-md-2" }, "Chamber:", -1)),
-            createBaseVNode("div", _hoisted_13$5, [
+            createBaseVNode("div", _hoisted_13$6, [
               createBaseVNode("label", _hoisted_14$4, toDisplayString(fridgeTemp.value), 1)
             ])
           ])
@@ -9925,8 +9921,8 @@ const _hoisted_8$c = { class: "col-md-4" };
 const _hoisted_9$b = { class: "text-center" };
 const _hoisted_10$b = { class: "col-md-4" };
 const _hoisted_11$7 = { class: "text-center" };
-const _hoisted_12$6 = { class: "col-md-4" };
-const _hoisted_13$4 = { class: "text-center" };
+const _hoisted_12$7 = { class: "col-md-4" };
+const _hoisted_13$5 = { class: "text-center" };
 const _hoisted_14$3 = { class: "col-md-4" };
 const _hoisted_15$1 = { class: "text-center" };
 const _hoisted_16$1 = { class: "col-md-4" };
@@ -10005,13 +10001,13 @@ const _sfc_main$J = {
                 _: 1
               })
             ]),
-            createBaseVNode("div", _hoisted_12$6, [
+            createBaseVNode("div", _hoisted_12$7, [
               createVNode(_component_BsCard, {
                 header: "Device",
                 title: "Software version"
               }, {
                 default: withCtx(() => [
-                  createBaseVNode("p", _hoisted_13$4, " Firmware: " + toDisplayString(unref(status).app_ver) + " (" + toDisplayString(unref(status).app_build) + ") UI: " + toDisplayString(unref(global$1).uiVersion) + " (" + toDisplayString(unref(global$1).uiBuild) + ") ", 1)
+                  createBaseVNode("p", _hoisted_13$5, " Firmware: " + toDisplayString(unref(status).app_ver) + " (" + toDisplayString(unref(status).app_build) + ") UI: " + toDisplayString(unref(global$1).uiVersion) + " (" + toDisplayString(unref(global$1).uiBuild) + ") ", 1)
                 ]),
                 _: 1
               })
@@ -10055,8 +10051,8 @@ const _hoisted_8$b = { class: "col-md-12" };
 const _hoisted_9$a = ["disabled"];
 const _hoisted_10$a = ["hidden"];
 const _hoisted_11$6 = ["disabled"];
-const _hoisted_12$5 = ["hidden"];
-const _hoisted_13$3 = ["disabled"];
+const _hoisted_12$6 = ["hidden"];
+const _hoisted_13$4 = ["disabled"];
 const _hoisted_14$2 = ["hidden"];
 const _sfc_main$I = {
   __name: "DeviceSettingsView",
@@ -10190,7 +10186,7 @@ const _sfc_main$I = {
                   "aria-hidden": "true",
                   hidden: !unref(global$1).disabled
                 }, null, 8, _hoisted_10$a),
-                _cache[7] || (_cache[7] = createTextVNode("  Save "))
+                _cache[7] || (_cache[7] = createTextVNode("  Save"))
               ], 8, _hoisted_9$a),
               _cache[10] || (_cache[10] = createTextVNode("  ")),
               createBaseVNode("button", {
@@ -10204,8 +10200,8 @@ const _sfc_main$I = {
                   role: "status",
                   "aria-hidden": "true",
                   hidden: !unref(global$1).disabled
-                }, null, 8, _hoisted_12$5),
-                _cache[8] || (_cache[8] = createTextVNode("  Restart device "))
+                }, null, 8, _hoisted_12$6),
+                _cache[8] || (_cache[8] = createTextVNode("  Restart device"))
               ], 8, _hoisted_11$6),
               _cache[11] || (_cache[11] = createTextVNode("  ")),
               createBaseVNode("button", {
@@ -10221,7 +10217,7 @@ const _sfc_main$I = {
                   hidden: !unref(global$1).disabled
                 }, null, 8, _hoisted_14$2),
                 _cache[9] || (_cache[9] = createTextVNode("  Restore factory defaults "))
-              ], 8, _hoisted_13$3)
+              ], 8, _hoisted_13$4)
             ])
           ])
         ], 32)
@@ -10328,13 +10324,15 @@ const _hoisted_1$s = { class: "container" };
 const _hoisted_2$o = { class: "row" };
 const _hoisted_3$j = { class: "col-md-6" };
 const _hoisted_4$h = { class: "col-md-6" };
-const _hoisted_5$d = { class: "col-md-4" };
-const _hoisted_6$d = { class: "col-md-4" };
+const _hoisted_5$d = { class: "col-md-6" };
+const _hoisted_6$d = { class: "col-md-6" };
 const _hoisted_7$a = { class: "col-md-4" };
-const _hoisted_8$a = { class: "row gy-2" };
-const _hoisted_9$9 = { class: "col-md-3" };
-const _hoisted_10$9 = ["disabled"];
-const _hoisted_11$5 = ["hidden"];
+const _hoisted_8$a = { class: "col-md-4" };
+const _hoisted_9$9 = { class: "col-md-4" };
+const _hoisted_10$9 = { class: "row gy-2" };
+const _hoisted_11$5 = { class: "col-md-3" };
+const _hoisted_12$5 = ["disabled"];
+const _hoisted_13$3 = ["hidden"];
 const _sfc_main$F = {
   __name: "DeviceHardwareView",
   setup(__props) {
@@ -10371,9 +10369,9 @@ const _sfc_main$F = {
       const _component_BsSelect = resolveComponent("BsSelect");
       const _component_BsInputSwitch = resolveComponent("BsInputSwitch");
       return openBlock(), createElementBlock("div", _hoisted_1$s, [
-        _cache[8] || (_cache[8] = createBaseVNode("p", null, null, -1)),
-        _cache[9] || (_cache[9] = createBaseVNode("p", { class: "h2" }, "Device - Settings", -1)),
-        _cache[10] || (_cache[10] = createBaseVNode("hr", null, null, -1)),
+        _cache[10] || (_cache[10] = createBaseVNode("p", null, null, -1)),
+        _cache[11] || (_cache[11] = createBaseVNode("p", { class: "h2" }, "Device - Settings", -1)),
+        _cache[12] || (_cache[12] = createBaseVNode("hr", null, null, -1)),
         createBaseVNode("form", {
           onSubmit: withModifiers(saveSettings, ["prevent"]),
           class: "needs-validation",
@@ -10400,33 +10398,57 @@ const _sfc_main$F = {
                 disabled: unref(global$1).disabled
               }, null, 8, ["modelValue", "options", "disabled"])
             ]),
-            _cache[5] || (_cache[5] = createBaseVNode("div", { class: "col-md-12" }, [
+            createBaseVNode("div", _hoisted_5$d, [
+              createVNode(_sfc_main$M, {
+                modelValue: unref(config).beer_sensor_offset,
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(config).beer_sensor_offset = $event),
+                label: "Beer Sensor Offset",
+                help: "Beer sensor offset value",
+                min: "-5",
+                max: "5",
+                step: "0.01",
+                disabled: unref(global$1).disabled
+              }, null, 8, ["modelValue", "disabled"])
+            ]),
+            createBaseVNode("div", _hoisted_6$d, [
+              createVNode(_sfc_main$M, {
+                modelValue: unref(config).fridge_sensor_offset,
+                "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(config).fridge_sensor_offset = $event),
+                label: "Fridge Sensor Offset",
+                help: "Fridge sensor offset value",
+                min: "-5",
+                max: "5",
+                step: "0.01",
+                disabled: unref(global$1).disabled
+              }, null, 8, ["modelValue", "disabled"])
+            ]),
+            _cache[7] || (_cache[7] = createBaseVNode("div", { class: "col-md-12" }, [
               createBaseVNode("hr")
             ], -1)),
-            createBaseVNode("div", _hoisted_5$d, [
+            createBaseVNode("div", _hoisted_7$a, [
               createVNode(_component_BsInputSwitch, {
                 modelValue: unref(config).enable_cooling,
-                "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => unref(config).enable_cooling = $event),
+                "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(config).enable_cooling = $event),
                 label: "Enable Cooling",
                 help: "If cooling circuit is available",
                 width: "",
                 disabled: unref(global$1).disabled
               }, null, 8, ["modelValue", "disabled"])
             ]),
-            createBaseVNode("div", _hoisted_6$d, [
+            createBaseVNode("div", _hoisted_8$a, [
               createVNode(_component_BsInputSwitch, {
                 modelValue: unref(config).enable_heating,
-                "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => unref(config).enable_heating = $event),
+                "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => unref(config).enable_heating = $event),
                 label: "Enable Heating",
                 help: "If heating circuit is available",
                 width: "",
                 disabled: unref(global$1).disabled
               }, null, 8, ["modelValue", "disabled"])
             ]),
-            createBaseVNode("div", _hoisted_7$a, [
+            createBaseVNode("div", _hoisted_9$9, [
               createVNode(_component_BsInputSwitch, {
                 modelValue: unref(config).invert_pins,
-                "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => unref(config).invert_pins = $event),
+                "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => unref(config).invert_pins = $event),
                 label: "Invert pins",
                 help: "If pins should be inverted",
                 width: "",
@@ -10434,11 +10456,11 @@ const _sfc_main$F = {
               }, null, 8, ["modelValue", "disabled"])
             ])
           ]),
-          createBaseVNode("div", _hoisted_8$a, [
-            _cache[7] || (_cache[7] = createBaseVNode("div", { class: "col-md-12" }, [
+          createBaseVNode("div", _hoisted_10$9, [
+            _cache[9] || (_cache[9] = createBaseVNode("div", { class: "col-md-12" }, [
               createBaseVNode("hr")
             ], -1)),
-            createBaseVNode("div", _hoisted_9$9, [
+            createBaseVNode("div", _hoisted_11$5, [
               createBaseVNode("button", {
                 type: "submit",
                 class: "btn btn-primary w-2",
@@ -10449,9 +10471,9 @@ const _sfc_main$F = {
                   role: "status",
                   "aria-hidden": "true",
                   hidden: !unref(global$1).disabled
-                }, null, 8, _hoisted_11$5),
-                _cache[6] || (_cache[6] = createTextVNode("  Save "))
-              ], 8, _hoisted_10$9)
+                }, null, 8, _hoisted_13$3),
+                _cache[8] || (_cache[8] = createTextVNode("  Save "))
+              ], 8, _hoisted_12$5)
             ])
           ])
         ], 32)
@@ -10638,7 +10660,7 @@ const _sfc_main$E = {
                   "aria-hidden": "true",
                   hidden: !unref(global$1).disabled
                 }, null, 8, _hoisted_12$4),
-                _cache[9] || (_cache[9] = createTextVNode("  Save "))
+                _cache[9] || (_cache[9] = createTextVNode("  Save"))
               ], 8, _hoisted_11$4),
               _cache[11] || (_cache[11] = createTextVNode("  ")),
               createBaseVNode("button", {
@@ -11333,7 +11355,7 @@ const _sfc_main$x = {
               type: "button",
               class: "btn btn-primary w-2",
               disabled: !isConnected.value
-            }, " Clear ", 8, _hoisted_5$5),
+            }, " Clear", 8, _hoisted_5$5),
             _cache[0] || (_cache[0] = createTextVNode("  ")),
             createBaseVNode("button", {
               onClick: connect,
@@ -11790,6 +11812,13 @@ const _sfc_main$t = {
     };
   }
 };
+const _export_sfc = (sfc, props) => {
+  const target = sfc.__vccOpts || sfc;
+  for (const [key, val] of props) {
+    target[key] = val;
+  }
+  return target;
+};
 const _sfc_main$s = {};
 const _hoisted_1$f = { class: "fw-bold" };
 function _sfc_render(_ctx, _cache) {
@@ -11806,7 +11835,7 @@ function _sfc_render(_ctx, _cache) {
     _: 1
   });
 }
-_sfc_main$s.render = _sfc_render;
+const NotFoundView = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render]]);
 const routes = [
   {
     path: "/",
@@ -11876,7 +11905,7 @@ const routes = [
   {
     path: "/:catchAll(.*)",
     name: "404",
-    component: _sfc_main$s
+    component: NotFoundView
   }
 ];
 const router = createRouter({
@@ -12342,13 +12371,13 @@ const _sfc_main$p = {
         unref(global$1).initialized ? (openBlock(), createBlock(_component_router_view, { key: 2 })) : createCommentVNode("", true),
         unref(global$1).initialized ? (openBlock(), createBlock(_sfc_main$q, {
           key: 3,
-          text: "(c) 2024 Magnus Persson, ui version " + unref(global$1).uiVersion + " (" + unref(global$1).uiBuild + ")"
+          text: "(c) 2024-2025 Magnus Persson, ui version " + unref(global$1).uiVersion + " (" + unref(global$1).uiBuild + ")"
         }, null, 8, ["text"])) : createCommentVNode("", true)
       ], 64);
     };
   }
 };
-const _sfc_main$o = Object.assign({
+const _sfc_main$o = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconXCircle",
@@ -12365,7 +12394,7 @@ const _sfc_main$o = Object.assign({
     };
   }
 });
-const _sfc_main$n = Object.assign({
+const _sfc_main$n = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconCheckCircle",
@@ -12382,7 +12411,7 @@ const _sfc_main$n = Object.assign({
     };
   }
 });
-const _sfc_main$m = Object.assign({
+const _sfc_main$m = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconInfoCircle",
@@ -12399,7 +12428,7 @@ const _sfc_main$m = Object.assign({
     };
   }
 });
-const _sfc_main$l = Object.assign({
+const _sfc_main$l = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconExclamationTriangle",
@@ -12423,7 +12452,7 @@ const _hoisted_1$b = {
   "data-bs-dismiss": "alert",
   "aria-label": "Close"
 };
-const _sfc_main$k = Object.assign({
+const _sfc_main$k = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsMessage",
@@ -12490,7 +12519,7 @@ const _hoisted_1$a = { class: "card" };
 const _hoisted_2$8 = { class: "card-body" };
 const _hoisted_3$5 = { class: "card-title" };
 const _hoisted_4$3 = { class: "card-text" };
-const _sfc_main$j = Object.assign({
+const _sfc_main$j = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsCard",
@@ -12545,7 +12574,7 @@ const _hoisted_1$9 = {
   role: "group"
 };
 const _hoisted_2$7 = ["disabled"];
-const _sfc_main$i = Object.assign({
+const _sfc_main$i = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsFileUpload",
@@ -12626,7 +12655,7 @@ const _hoisted_3$4 = {
   class: "badge text-bg-danger rounded-circle"
 };
 const _hoisted_4$2 = { class: "form-text" };
-const _sfc_main$g = Object.assign({
+const _sfc_main$g = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputBase",
@@ -12661,7 +12690,7 @@ const _sfc_main$g = Object.assign({
     };
   }
 });
-const _sfc_main$f = Object.assign({
+const _sfc_main$f = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconEyeSlash",
@@ -12679,7 +12708,7 @@ const _sfc_main$f = Object.assign({
     };
   }
 });
-const _sfc_main$e = Object.assign({
+const _sfc_main$e = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconEye",
@@ -12702,7 +12731,7 @@ const _hoisted_3$3 = {
   key: 0,
   class: "input-group-text"
 };
-const _sfc_main$d = Object.assign({
+const _sfc_main$d = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputText",
@@ -12776,7 +12805,7 @@ const _sfc_main$d = Object.assign({
 });
 const _hoisted_1$5 = { class: "input-group" };
 const _hoisted_2$4 = ["data-bs-title"];
-const _sfc_main$c = Object.assign({
+const _sfc_main$c = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputReadonly",
@@ -12824,7 +12853,7 @@ const _sfc_main$c = Object.assign({
     };
   }
 });
-const _sfc_main$b = Object.assign({
+const _sfc_main$b = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconWifi",
@@ -12844,7 +12873,7 @@ const _sfc_main$b = Object.assign({
 const _hoisted_1$4 = ["disabled"];
 const _hoisted_2$3 = ["value"];
 const _hoisted_3$2 = ["value"];
-const _sfc_main$a = Object.assign({
+const _sfc_main$a = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsSelect",
@@ -12914,7 +12943,7 @@ const _sfc_main$a = Object.assign({
   }
 });
 const _hoisted_1$3 = ["data-bs-title"];
-const _sfc_main$9 = Object.assign({
+const _sfc_main$9 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputTextArea",
@@ -12968,7 +12997,7 @@ const _hoisted_1$2 = {
   style: { "height": "38px" }
 };
 const _hoisted_2$2 = ["disabled", "data-bs-title"];
-const _sfc_main$8 = Object.assign({
+const _sfc_main$8 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsInputSwitch",
@@ -13028,7 +13057,7 @@ const _hoisted_1$1 = { class: "dropdown" };
 const _hoisted_2$1 = ["disabled"];
 const _hoisted_3$1 = { class: "dropdown-menu" };
 const _hoisted_4$1 = ["onClick"];
-const _sfc_main$7 = Object.assign({
+const _sfc_main$7 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsDropdown",
@@ -13104,7 +13133,7 @@ const _hoisted_5 = { class: "modal-header" };
 const _hoisted_6 = { class: "modal-title fs-5" };
 const _hoisted_7 = { class: "modal-body" };
 const _hoisted_8 = { class: "modal-footer" };
-const _sfc_main$6 = Object.assign({
+const _sfc_main$6 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "BsModalConfirm",
@@ -13167,7 +13196,7 @@ const _sfc_main$6 = Object.assign({
     };
   }
 });
-const _sfc_main$5 = Object.assign({
+const _sfc_main$5 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconHome",
@@ -13183,7 +13212,7 @@ const _sfc_main$5 = Object.assign({
     };
   }
 });
-const _sfc_main$4 = Object.assign({
+const _sfc_main$4 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconTools",
@@ -13199,7 +13228,7 @@ const _sfc_main$4 = Object.assign({
     };
   }
 });
-const _sfc_main$3 = Object.assign({
+const _sfc_main$3 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconGraphUpArrow",
@@ -13218,7 +13247,7 @@ const _sfc_main$3 = Object.assign({
     };
   }
 });
-const _sfc_main$2 = Object.assign({
+const _sfc_main$2 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconCloudUpArrow",
@@ -13238,7 +13267,7 @@ const _sfc_main$2 = Object.assign({
     };
   }
 });
-const _sfc_main$1 = Object.assign({
+const _sfc_main$1 = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconUpArrow",
@@ -13257,7 +13286,7 @@ const _sfc_main$1 = Object.assign({
     };
   }
 });
-const _sfc_main = Object.assign({
+const _sfc_main = /* @__PURE__ */ Object.assign({
   inheritAttrs: false
 }, {
   __name: "IconCpu",
