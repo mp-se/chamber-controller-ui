@@ -37,6 +37,16 @@
           ></BsInputRadio>
         </div>
 
+        <div class="col-md-4">
+          <BsInputSwitch
+            v-model="config.ble_enabled"
+            label="Enable BLE"
+            help="Send temperature data over Bluetooth"
+            width=""
+            :disabled="global.disabled"
+          ></BsInputSwitch>
+        </div>
+
         <div class="col-md-3">
           <BsInputRadio
             v-model="config.dark_mode"

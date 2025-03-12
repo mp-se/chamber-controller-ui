@@ -58,6 +58,7 @@ export var configData = {
   target_temperature: 10.4,
   enable_cooling: true,
   enable_heating: true,
+  ble_enabled: false
 }
 
 export var statusData = {
