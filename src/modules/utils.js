@@ -38,7 +38,7 @@ export function isValidJson(s) {
   try {
     JSON.stringify(JSON.parse(s))
     return true
-  } catch{
+  } catch {
     logDebug('utils.isValidJson()')
   }
 

@@ -12,6 +12,7 @@ import PushHttpPostView from '@/views/PushHttpPostView.vue'
 import PushHttpGetView from '@/views/PushHttpGetView.vue'
 import PushInfluxdbView from '@/views/PushInfluxdbView.vue'
 import PushMqttView from '@/views/PushMqttView.vue'
+import PushBluetoothView from '@/views/PushBluetoothView.vue'
 import FirmwareView from '@/views/FirmwareView.vue'
 import SupportView from '@/views/SupportView.vue'
 import SerialView from '@/views/SerialView.vue'
@@ -66,8 +67,13 @@ const routes = [
   },
   {
     path: '/push/mqtt',
-    name: 'push-Mqtt',
+    name: 'push-mqtt',
     component: PushMqttView
+  },
+  {
+    path: '/push/ble',
+    name: 'push-ble',
+    component: PushBluetoothView
   },
   {
     path: '/other/support',
@@ -164,12 +170,16 @@ const items = ref([
         label: 'Influxdb v2',
         badge: badge.pushHttpInfluxdb2Badge,
         path: '/push/influxdb'
-      }
+      },
       // {
       //   label: 'MQTT',
       //   badge: badge.pushHttpMqttBadge,
       //   path: '/push/mqtt'
       // }
+      {
+        label: 'Bluetooth',
+        path: '/push/ble'
+      }
     ]
   },
   {

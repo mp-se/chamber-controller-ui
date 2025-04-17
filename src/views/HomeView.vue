@@ -50,7 +50,13 @@
 
         <div class="col-md-4">
           <BsCard header="Device" title="Platform">
-            <p class="text-center">{{ status.platform }} (ID: {{ status.id }})</p>
+            <p class="text-center">{{ status.platform }}</p>
+          </BsCard>
+        </div>
+
+        <div class="col-md-4">
+          <BsCard header="Device" title="Device ID">
+            <p class="text-center">{{ status.id }}</p>
           </BsCard>
         </div>
 
