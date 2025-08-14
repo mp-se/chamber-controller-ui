@@ -7085,10 +7085,10 @@ const useGlobalStore = /* @__PURE__ */ defineStore("global", {
       return this.url;
     },
     uiVersion() {
-      return "0.4.0";
+      return "0.5-beta1";
     },
     uiBuild() {
-      return "..f2d86c";
+      return "..70d8ab";
     },
     disabled32() {
       if (this.disabled) return true;
@@ -9834,10 +9834,11 @@ const _hoisted_12$7 = { class: "col-md-4" };
 const _hoisted_13$5 = { class: "text-center" };
 const _hoisted_14$3 = { class: "col-md-4" };
 const _hoisted_15$1 = { class: "text-center" };
-const _hoisted_16$1 = { class: "col-md-4" };
-const _hoisted_17$1 = { class: "text-center" };
-const _hoisted_18$1 = { class: "col-md-4" };
-const _hoisted_19 = { class: "text-center" };
+const _hoisted_16$1 = { class: "badge bg-secondary" };
+const _hoisted_17$1 = { class: "col-md-4" };
+const _hoisted_18$1 = { class: "text-center" };
+const _hoisted_19 = { class: "col-md-4" };
+const _hoisted_20 = { class: "text-center" };
 const _sfc_main$K = {
   __name: "HomeView",
   setup(__props) {
@@ -9929,29 +9930,31 @@ const _sfc_main$K = {
                 title: "Platform"
               }, {
                 default: withCtx(() => [
-                  createBaseVNode("p", _hoisted_15$1, toDisplayString(unref(status).platform), 1)
+                  createBaseVNode("p", _hoisted_15$1, [
+                    createBaseVNode("span", _hoisted_16$1, toDisplayString(unref(status).platform), 1)
+                  ])
                 ]),
                 _: 1
               })
             ]),
-            createBaseVNode("div", _hoisted_16$1, [
+            createBaseVNode("div", _hoisted_17$1, [
               createVNode(_component_BsCard, {
                 header: "Device",
                 title: "Device ID"
               }, {
                 default: withCtx(() => [
-                  createBaseVNode("p", _hoisted_17$1, toDisplayString(unref(status).id), 1)
+                  createBaseVNode("p", _hoisted_18$1, toDisplayString(unref(status).id), 1)
                 ]),
                 _: 1
               })
             ]),
-            createBaseVNode("div", _hoisted_18$1, [
+            createBaseVNode("div", _hoisted_19, [
               createVNode(_component_BsCard, {
                 header: "Device",
                 title: "Uptime"
               }, {
                 default: withCtx(() => [
-                  createBaseVNode("p", _hoisted_19, toDisplayString(unref(status).uptime_days) + " days " + toDisplayString(unref(status).uptime_hours) + " hours " + toDisplayString(unref(status).uptime_minutes) + " minutes " + toDisplayString(unref(status).uptime_seconds) + " seconds ", 1)
+                  createBaseVNode("p", _hoisted_20, toDisplayString(unref(status).uptime_days) + " days " + toDisplayString(unref(status).uptime_hours) + " hours " + toDisplayString(unref(status).uptime_minutes) + " minutes " + toDisplayString(unref(status).uptime_seconds) + " seconds ", 1)
                 ]),
                 _: 1
               })
