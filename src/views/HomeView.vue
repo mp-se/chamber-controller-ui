@@ -50,7 +50,9 @@
 
         <div class="col-md-4">
           <BsCard header="Device" title="Platform">
-            <p class="text-center"><span class="badge bg-secondary">{{ status.platform }}</span></p>
+            <p class="text-center">
+              <span class="badge bg-secondary">{{ status.platform }}</span>
+            </p>
           </BsCard>
         </div>
 
