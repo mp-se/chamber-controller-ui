@@ -24,10 +24,11 @@
     v-if="global.initialized" 
     :disabled="global.disabled" 
     brand="Chamber Controller"
-    :menu-items="items"
-    :dark-mode="config.dark_mode"
-    :mdns="config.mdns || 'chamber-controller'"
-    @update:dark-mode="config.dark_mode = $event"
+     :menu-items="items"
+     :dark-mode="config.dark_mode"
+     :mdns="config.mdns"
+     :config-changed="global.configChanged"
+    @update:dark-mode="handleDarkModeUpdate"
   />
 
   <div class="container">
@@ -90,9 +91,12 @@
 <script setup>
 
 import { watch, onBeforeMount, onBeforeUnmount, ref } from 'vue'
-import { global, status, config } from '@/modules/pinia'
+import { global, status, config, saveConfigState } from '@/modules/pinia'
 // Removed unused logError, logDebug, logInfo imports
-import { items } from '@/modules/router'
+import { items as staticItems } from '@/modules/router'
+import { computed } from 'vue'
+
+const items = computed(() => JSON.parse(JSON.stringify(staticItems.value)))
 
 const polling = ref(null)
 const close = (alert) => {
@@ -150,12 +154,29 @@ async function initializeApp() {
       return
     }
 
+    // Save config snapshot for change detection
+    saveConfigState()
+
     // Success! Initialize the app
     global.initialized = true
     hideSpinner()
   } catch (error) {
     global.messageError = `Initialization failed: ${error.message}`
     hideSpinner()
+  }
+}
+
+// Handle dark mode changes
+const handleDarkModeUpdate = (newValue) => {
+  // update the store value
+  config.dark_mode = newValue
+  // fallback: ensure the attribute is set on the document root so Bootstrap theme rules apply
+  try {
+    const root = document.documentElement
+    if (newValue) root.setAttribute('data-bs-theme', 'dark')
+    else root.setAttribute('data-bs-theme', 'light')
+  } catch (e) {
+    console.error('Failed to set data-bs-theme on documentElement', e)
   }
 }
 

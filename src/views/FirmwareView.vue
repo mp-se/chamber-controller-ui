@@ -17,36 +17,37 @@
         </div>
 
         <div class="col-md-12">
-          <BsFileUpload
-            name="upload"
-            id="upload"
-            label="Select firmware file"
-            accept=".bin"
-            help="Choose the firmware file that will be used to update the device"
-            :disabled="global.disabled"
-          >
-          </BsFileUpload>
+            <BsFileUpload
+              name="upload"
+              id="upload"
+              label="Select firmware file"
+              accept=".bin"
+              help="Choose the firmware file that will be used to update the device"
+              :disabled="global.disabled"
+              @change="onFileChange"
+            >
+            </BsFileUpload>
         </div>
 
         <div class="col-md-3">
           <p></p>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            id="upload-btn"
-            value="upload"
-            data-bs-toggle="tooltip"
-            title="Update the device with the selected firmware"
-            :disabled="global.disabled"
-          >
-            <span
-              class="spinner-border spinner-border-sm"
-              role="status"
-              aria-hidden="true"
-              v-show="global.disabled"
-            ></span>
-            &nbsp;Flash firmware
-          </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="upload-btn"
+              value="upload"
+              data-bs-toggle="tooltip"
+              title="Update the device with the selected firmware"
+              :disabled="global.disabled || !hasFileSelected"
+            >
+              <span
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+                v-show="global.disabled"
+              ></span>
+              &nbsp;Flash firmware
+            </button>
         </div>
 
         <div v-if="progress > 0" class="col-md-12">
@@ -64,6 +65,11 @@ import { global, status } from '@/modules/pinia'
 import { logDebug, logError } from '@mp-se/espframework-ui-components'
 
 const progress = ref(0)
+const hasFileSelected = ref(false)
+
+function onFileChange(event) {
+  hasFileSelected.value = event.target.files.length > 0
+}
 
 function upload() {
   const fileElement = document.getElementById('upload')
@@ -85,7 +91,8 @@ function upload() {
     progress.value = 0
   }
 
-  if (fileElement.files.length === 0) {
+  hasFileSelected.value = fileElement.files.length > 0
+  if (!hasFileSelected.value) {
     global.messageFailed = 'You need to select one file with firmware to upload'
   } else {
     global.disabled = true
