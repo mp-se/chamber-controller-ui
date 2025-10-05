@@ -71,8 +71,8 @@ const routes = [
     component: PushMqttView
   },
   {
-    path: '/push/ble',
-    name: 'push-ble',
+    path: '/push/bluetooth',
+    name: 'push-bluetooth',
     component: PushBluetoothView
   },
   {
@@ -116,35 +116,33 @@ router.beforeEach(() => {
 const items = ref([
   {
     label: 'Home',
-    icon: 'bi-home',
-    path: '/',
-    subs: []
+    icon: 'IconHome',
+    path: '/'
   },
   {
     label: 'Device',
-    icon: 'bi-cpu',
+    icon: 'IconCpu',
     path: '/device',
     badge: badge.deviceBadge,
     subs: [
       {
+        label: 'Hardware',
+        badge: badge.deviceHardwareBadge,
+        path: '/device/hardware'
+      },
+      {
+        label: 'PID Controller',
+        badge: badge.devicePidBadge,
+        path: '/device/pid'
+      },
+      {
         label: 'Settings',
-        icon: 'pi pi-cog',
         badge: badge.deviceSettingBadge,
         path: '/device/settings'
       },
       {
-        label: 'Hardware',
-        icon: 'pi pi-cog',
-        path: '/device/hardware'
-      },
-      {
-        label: 'PID',
-        icon: 'pi pi-cog',
-        path: '/device/pid'
-      },
-      {
         label: 'Wifi',
-        icon: 'pi pi-cog',
+        icon: 'IconWifi',
         badge: badge.deviceWifiBadge,
         path: '/device/wifi'
       }
@@ -152,15 +150,15 @@ const items = ref([
   },
   {
     label: 'Push targets',
-    icon: 'bi-cloud-up-arrow',
+    icon: 'IconCloudUpArrow',
     path: '/push',
     badge: badge.pushBadge,
     subs: [
-      // {
-      //   label: 'HTTP Post',
-      //   badge: badge.pushHttpPostBadge,
-      //   path: '/push/http-post'
-      // },
+      {
+        label: 'Bluetooth',
+        badge: badge.pushBluetoothBadge,
+        path: '/push/bluetooth'
+      },
       // {
       //   label: 'HTTP Get',
       //   badge: badge.pushHttpGetBadge,
@@ -168,23 +166,24 @@ const items = ref([
       // },
       {
         label: 'Influxdb v2',
-        badge: badge.pushHttpInfluxdb2Badge,
+        badge: badge.pushInfluxdb2Badge,
         path: '/push/influxdb'
       },
       // {
       //   label: 'MQTT',
-      //   badge: badge.pushHttpMqttBadge,
+      //   badge: badge.pushMqttBadge,
       //   path: '/push/mqtt'
+      // },
+      // {
+      //   label: 'HTTP Post',
+      //   badge: badge.pushHttpPost1Badge,
+      //   path: '/push/http-post'
       // }
-      {
-        label: 'Bluetooth',
-        path: '/push/ble'
-      }
     ]
   },
   {
     label: 'Other',
-    icon: 'bi-tools',
+    icon: 'IconTools',
     path: '/other',
     subs: [
       {

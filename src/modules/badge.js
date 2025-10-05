@@ -54,3 +54,19 @@ export function pushHttpInfluxdb2Badge() {
 export function pushHttpMqttBadge() {
   return pushTargetCount() === 0 ? 1 : 0
 }
+
+export function deviceHardwareBadge() {
+  return 0
+}
+
+export function devicePidBadge() {
+  return 0
+}
+
+export function pushBluetoothBadge() {
+  return pushTargetCount() === 0 ? 1 : 0
+}
+
+export function pushInfluxdb2Badge() {
+  return pushTargetCount() === 0 ? 1 : 0
+}

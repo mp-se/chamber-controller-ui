@@ -43,7 +43,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Flash firmware
           </button>
@@ -61,7 +61,7 @@
 <script setup>
 import { ref } from 'vue'
 import { global, status } from '@/modules/pinia'
-import { logDebug, logError } from '@/modules/logger'
+import { logDebug, logError } from '@mp-se/espframework-ui-components'
 
 const progress = ref(0)
 
@@ -69,9 +69,20 @@ function upload() {
   const fileElement = document.getElementById('upload')
 
   function errorAction(e) {
-    logError('FirmwareView.upload()', e.type)
-    global.messageFailed = 'File upload failed!'
+    logError('FirmwareView.upload()', `Upload ${e.type}:`, e)
+    
+    let errorMessage = 'File upload failed!'
+    if (e.type === 'timeout') {
+      errorMessage = 'File upload timed out after 3 minutes. Please try again.'
+    } else if (e.type === 'error') {
+      errorMessage = 'Network error during file upload. Check connection and try again.'
+    } else if (e.type === 'abort') {
+      errorMessage = 'File upload was cancelled.'
+    }
+    
+    global.messageError = errorMessage
     global.disabled = false
+    progress.value = 0
   }
 
   if (fileElement.files.length === 0) {
@@ -102,10 +113,27 @@ function upload() {
         global.messageSuccess =
           'File upload completed, waiting for device to restart before doing refresh!'
         global.messageFailed = ''
+        
+        // Use a more reliable redirect with timeout cleanup
+        const redirectTimeout = setTimeout(() => {
+          try {
+            location.href = location.href.replace('/other/firmware', '')
+          } catch (error) {
+            logError('FirmwareView.redirect()', error)
+            // Fallback redirect
+            window.location.reload()
+          }
+        }, 10000)
+        
+        // Clean up timeout on page unload
+        window.addEventListener('beforeunload', () => {
+          clearTimeout(redirectTimeout)
+        }, { once: true })
+        
+      } else {
+        global.messageError = `Upload failed with status ${xhr.status}: ${xhr.statusText || 'Unknown error'}`
       }
-      setTimeout(() => {
-        location.href = location.href.replace('/other/firmware', '')
-      }, 10000)
+      global.disabled = false
     }
 
     // The update only seams to work when loaded from the device (i.e. when CORS is not used)

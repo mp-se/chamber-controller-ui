@@ -17,13 +17,13 @@
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Measurement" title="Wifi">
+          <BsCard header="Measurement" color="info" title="Wifi">
             <p class="text-center">{{ status.rssi }} dBm - {{ status.wifi_ssid }}</p>
           </BsCard>
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Device" title="IP Address">
+          <BsCard header="Device" color="info" title="IP Address">
             <p class="text-center">
               {{ status.ip }}
             </p>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Device" title="Memory">
+          <BsCard header="Device" color="info" title="Memory">
             <p class="text-center">
               Free: {{ status.free_heap }} kb, Total: {{ status.total_heap }} kb
             </p>
@@ -39,7 +39,7 @@
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Device" title="Software version">
+          <BsCard header="Device" color="info" title="Software version">
             <p class="text-center">
               Firmware: {{ status.app_ver }} ({{ status.app_build }}) UI: {{ global.uiVersion }} ({{
                 global.uiBuild
@@ -49,7 +49,7 @@
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Device" title="Platform">
+          <BsCard header="Device" color="info" title="Platform">
             <p class="text-center">
               <span class="badge bg-secondary">{{ status.platform }}</span>
             </p>
@@ -57,13 +57,13 @@
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Device" title="Device ID">
+          <BsCard header="Device" color="info" title="Device ID">
             <p class="text-center">{{ status.id }}</p>
           </BsCard>
         </div>
 
         <div class="col-md-4">
-          <BsCard header="Device" title="Uptime">
+          <BsCard header="Device" color="info" title="Uptime">
             <p class="text-center">
               {{ status.uptime_days }} days {{ status.uptime_hours }} hours
               {{ status.uptime_minutes }} minutes {{ status.uptime_seconds }} seconds
@@ -92,14 +92,6 @@ function updateTimers() {
   status.pid_time_since_heating += 1
 }
 
-onBeforeMount(() => {
-  timer.value = setInterval(updateTimers, 1000)
-})
-
-onBeforeUnmount(() => {
-  clearInterval(timer.value)
-})
-
 function refresh() {
   status.load((success) => {
     if (success) {
@@ -109,13 +101,14 @@ function refresh() {
 }
 
 onBeforeMount(() => {
+  timer.value = setInterval(updateTimers, 1000)
   refresh()
   polling.value = setInterval(refresh, 4000)
 })
 
 onBeforeUnmount(() => {
+  clearInterval(timer.value)
   clearInterval(polling.value)
 })
 </script>
-
 <style></style>

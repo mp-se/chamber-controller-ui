@@ -110,7 +110,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Save</button
           >&nbsp;
@@ -125,7 +125,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Restart device
           </button>
@@ -140,7 +140,7 @@ import { validateCurrentForm, restart } from '@/modules/utils'
 import { global, config } from '@/modules/pinia'
 import * as badge from '@/modules/badge'
 import { onMounted, ref } from 'vue'
-import { logDebug } from '@/modules/logger'
+import { logDebug, logError } from '@mp-se/espframework-ui-components'
 
 const scanning = ref(false)
 const networks = ref([])
@@ -181,11 +181,16 @@ onMounted(() => {
   })
 })
 
-const save = () => {
-  if (!validateCurrentForm()) return
+const save = async () => {
+  try {
+    if (!validateCurrentForm()) return
 
-  config.saveAll()
-  global.messageInfo =
-    'If WIFI settings are changed, restart the device and enter the new URL of the device!'
+    await config.saveAll()
+    global.messageInfo =
+      'If WIFI settings are changed, restart the device and enter the new URL of the device!'
+  } catch (error) {
+    logError('DeviceWifiView.save()', error)
+    global.messageError = 'Failed to save WiFi settings: ' + (error.message || error)
+  }
 }
 </script>

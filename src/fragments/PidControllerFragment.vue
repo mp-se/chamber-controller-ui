@@ -48,9 +48,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { validateCurrentForm } from '@/modules/utils'
 import { global, config, status } from '@/modules/pinia'
-import { logDebug, logError, logInfo } from '@/modules/logger'
-import BsInputRadio from '@/components/BsInputRadio.vue'
-import BsInputNumber from '@/components/BsInputNumber.vue'
+import { logDebug, logError, logInfo } from '@mp-se/espframework-ui-components'
 import { storeToRefs } from 'pinia'
 
 const newMode = ref('o')
@@ -81,38 +79,40 @@ onMounted(() => {
   }
 })
 
-const saveSettings = () => {
-  if (!validateCurrentForm()) return
+const saveSettings = async () => {
+  try {
+    if (!validateCurrentForm()) return
 
-  global.disabled = true
+    global.disabled = true
+    global.clearMessages()
 
-  var data = {
-    new_mode: '',
-    new_temperature: 0
+    const data = {
+      new_mode: newMode.value,
+      new_temperature: newTemperature.value
+    }
+
+    logDebug('PidControllerFragment.saveSettings()', data)
+    logInfo('PidControllerFragment.saveSettings()', 'Sending /api/mode')
+
+    const response = await fetch(global.baseURL + 'api/mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: global.token },
+      body: JSON.stringify(data),
+      signal: AbortSignal.timeout(global.fetchTimeout)
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    logInfo('PidControllerFragment.saveSettings()', 'Sending /api/mode completed')
+    global.messageSuccess = 'PID controller settings updated successfully'
+
+  } catch (err) {
+    logError('PidControllerFragment.saveSettings()', err)
+    global.messageError = 'Failed to update PID controller: ' + (err.message || err)
+  } finally {
+    global.disabled = false
   }
-
-  data.new_mode = newMode.value
-  data.new_temperature = newTemperature.value
-
-  logDebug('PidController:saveSettings()', data)
-
-  logDebug('PidController:saveSettings()', 'Sending /api/mode')
-  fetch(global.baseURL + 'api/mode', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: global.token },
-    body: JSON.stringify(data)
-  })
-    .then((res) => {
-      if (res.status != 200) {
-        logError('configStore:saveSettings()', 'Sending /api/mode failed')
-      } else {
-        logInfo('configStore:saveSettings()', 'Sending /api/mode completed')
-      }
-      global.disabled = false
-    })
-    .catch((err) => {
-      logError('configStore:saveSettings()', 'Sending /api/mode failed', err)
-      global.disabled = false
-    })
 }
 </script>

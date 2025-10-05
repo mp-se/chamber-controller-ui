@@ -11,7 +11,7 @@
           class="spinner-border spinner-border-sm"
           role="status"
           aria-hidden="true"
-          :hidden="!global.disabled"
+          v-show="global.disabled"
         ></span>
         &nbsp;Reload
       </button>
@@ -22,7 +22,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { global } from '@/modules/pinia'
-import { logError, logDebug } from '@/modules/logger'
+import { logError, logDebug } from '@mp-se/espframework-ui-components'
 
 const data = ref('')
 const source = defineModel('source')

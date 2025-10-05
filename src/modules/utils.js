@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { logDebug, logError, logInfo } from '@/modules/logger'
+import { logDebug, logError, logInfo } from '@mp-se/espframework-ui-components'
 import { global, config } from '@/modules/pinia'
 
 export const httpHeaderOptions = ref([
@@ -34,56 +34,51 @@ export function validateCurrentForm() {
   return valid
 }
 
-export function isValidJson(s) {
-  try {
-    JSON.stringify(JSON.parse(s))
-    return true
-  } catch {
-    logDebug('utils.isValidJson()')
-  }
-
-  return false
-}
-
-export function isValidFormData(s) {
-  if (s.startsWith('?')) return true
-
-  return false
-}
-
-export function isValidMqttData(s) {
-  if (s.indexOf('|') >= 0) return true
-
-  return false
-}
-
-export function restart() {
+export async function restart() {
   global.clearMessages()
   global.disabled = true
-  fetch(global.baseURL + 'api/restart', {
-    headers: { Authorization: global.token },
-    signal: AbortSignal.timeout(global.fetchTimout)
-  })
-    .then((res) => res.json())
-    .then((json) => {
-      logDebug('utils.restart()', json)
-      if (json.status == true) {
-        global.messageSuccess =
-          json.message + ' Redirecting to http://' + config.mdns + '.local in 8 seconds.'
-        logInfo('utils.restart()', 'Scheduling refresh of UI')
-        setTimeout(() => {
+  
+  const abortController = new AbortController()
+  let redirectTimeout = null
+  
+  try {
+    const response = await fetch(global.baseURL + 'api/restart', {
+      headers: { Authorization: global.token },
+      signal: abortController.signal
+    })
+    const json = await response.json()
+    
+    logDebug('utils.restart()', json)
+    if (json.status == true) {
+      global.messageSuccess =
+        json.message + ' Redirecting to http://' + config.mdns + '.local in 8 seconds.'
+      logInfo('utils.restart()', 'Scheduling refresh of UI')
+      
+      redirectTimeout = setTimeout(() => {
+        try {
           location.href = 'http://' + config.mdns + '.local'
-        }, 8000)
-      } else {
-        global.messageError = json.message
-        global.disabled = false
-      }
-    })
-    .catch((err) => {
-      logError('utils.restart()', err)
-      global.messageError = 'Failed to do restart'
+        } catch (error) {
+          logError('utils.restart.redirect()', error)
+          // Fallback to current location
+          window.location.reload()
+        }
+      }, 8000)
+      
+      // Clean up on page unload
+      window.addEventListener('beforeunload', () => {
+        if (redirectTimeout) clearTimeout(redirectTimeout)
+        abortController.abort()
+      }, { once: true })
+      
+    } else {
+      global.messageError = json.message
       global.disabled = false
-    })
+    }
+  } catch (err) {
+    logError('utils.restart()', err)
+    global.messageError = 'Failed to restart device: ' + (err.message || err)
+    global.disabled = false
+  }
 }
 
 export function formatTime(t) {

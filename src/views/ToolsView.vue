@@ -23,14 +23,14 @@
             class="spinner-border spinner-border-sm"
             role="status"
             aria-hidden="true"
-            :hidden="!global.disabled"
+            v-show="global.disabled"
           ></span>
           &nbsp;Enable Advanced
         </button>
       </div>
     </div>
 
-    <AdvancedFilesFragment v-if="!hideAdvanced"></AdvancedFilesFragment>
+    <AdvancedFileFragment v-if="!hideAdvanced"></AdvancedFileFragment>
 
     <div class="row gy-4" v-if="!hideAdvanced">
       <p></p>
@@ -45,7 +45,7 @@
 import { ref } from 'vue'
 import { global } from '@/modules/pinia'
 import ListFilesFragment from '@/fragments/ListFilesFragment.vue'
-import AdvancedFilesFragment from '@/fragments/AdvancedFilesFragment.vue'
+import AdvancedFileFragment from '@/fragments/AdvancedFileFragment.vue'
 import EnableCorsFragment from '@/fragments/EnableCorsFragment.vue'
 
 const hideAdvanced = ref(true)

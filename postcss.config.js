@@ -1,127 +1,101 @@
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
-const purgecss = require('@fullhuman/postcss-purgecss').default
-const cssnano = require('cssnano')
-const autoprefixer = require('autoprefixer')
-const postcssPresetEnv = require('postcss-preset-env')
+import purgecss from '@fullhuman/postcss-purgecss'
+import cssnano from 'cssnano'
 
 export default {
   plugins: [
-    // Modern CSS features and browser compatibility
-    postcssPresetEnv({
-      stage: 2,
-      features: {
-        'nesting-rules': true,
-        'custom-media-queries': true,
-        'custom-properties': {
-          preserve: false
-        }
-      }
-    }),
-    
-    // Vendor prefixes
-    autoprefixer({
-      overrideBrowserslist: [
-        '> 1%',
-        'last 2 versions',
-        'not dead'
-      ],
-      grid: 'autoplace'
-    }),
-    
-    // Remove unused CSS (optimized safelist for chamber-controller)
-    purgecss({
+    purgecss.default({
       content: [
         './index.html',
         './src/**/*.{vue,js,ts,jsx,tsx}',
         './src/**/*.html'
       ],
       safelist: [
-        // Vue Router and transitions
-        /-(leave|enter|appear)(|-(to|from|active))$/,
-        /^(?!(|.*?:)cursor-move).+-move$/,
-        /^router-link(|-exact)-active$/,
-        /data-v-.*/,
+        // Bootstrap Layout
+        /^container(-fluid)?$/,
+        /^row$/,
+        /^col(-.*)?$/,
+        /^g[xy]?-\d+$/,
         
-        // Layout classes actually used in chamber-controller
-        'container-fluid',
-        'align-center',
-        'align-items-center',
-        'd-none',
-        'd-lg-flex',
-        'text-center',
-        'text-light',
-        'text-white',
-        
-        // Navbar specific classes (heavily used)
-        'navbar',
-        'navbar-expand-lg', 
-        'navbar-dark',
-        'navbar-toggler',
-        'navbar-toggler-icon',
-        'navbar-brand',
-        'navbar-collapse',
-        'navbar-nav',
-        'nav-item',
-        'nav-link',
-        'collapse',
-        'vr',
-        
-        // Button classes
+        // Bootstrap Components
         /^btn(-.*)?$/,
-        'btn-close',
-        'btn-group',
-        
-        // Form classes (used in Bs components)
-        'form-control',
-        'form-control-plaintext',
-        'form-check',
-        'form-check-input',
-        'form-switch',
-        'form-label',
-        'form-text',
-        'input-group',
-        'input-group-text',
-        'has-validation',
-        
-        // Card classes
-        'card',
-        'card-body',
-        'card-title',
-        'card-text',
-        /^card-header(-.*)?$/,
-        
-        // Alert classes
-        /^alert(-.*)?$/,
-        'alert-dismissible',
-        
-        // Badge classes
         /^badge(-.*)?$/,
-        'text-bg-danger',
-        'text-bg-primary',
-        'rounded-circle',
-        'rounded-pill',
+        /^spinner(-.*)?$/,
+        /^form(-.*)?$/,
+        /^input(-.*)?$/,
+        /^select(-.*)?$/,
+        /^textarea(-.*)?$/,
+        /^card(-.*)?$/,
+        /^nav(-.*)?$/,
+        /^navbar(-.*)?$/,
+        /^dropdown(-.*)?$/,
+        /^modal(-.*)?$/,
+        /^alert(-.*)?$/,
+        /^progress(-.*)?$/,
+        /^table(-.*)?$/,
         
-        // Progress bar
-        'progress',
-        'progress-bar',
+        // Bootstrap Utilities
+        /^d(-.*)?$/,
+        /^p[xytblr]?-\d+$/,
+        /^m[xytblr]?-\d+$/,
+        /^text(-.*)?$/,
+        /^bg(-.*)?$/,
+        /^border(-.*)?$/,
+        /^w(-.*)?$/,
+        /^h(-.*)?$/,
+        /^position(-.*)?$/,
+        /^top-\d+$/,
+        /^start-\d+$/,
+        /^end-\d+$/,
+        /^bottom-\d+$/,
+        /^justify(-.*)?$/,
+        /^align(-.*)?$/,
+        /^flex(-.*)?$/,
+        /^float(-.*)?$/,
+        /^rounded(-.*)?$/,
+        /^shadow(-.*)?$/,
+        /^opacity(-.*)?$/,
+        /^overflow(-.*)?$/,
+        /^z(-.*)?$/,
         
-        // Background and text utilities actually used
-        'bg-primary',
-        'bg-success',
-        'bg-danger',
-        'bg-warning',
-        'bg-info',
-        'fw-bold',
+        // Typography
+        /^h[1-6]$/,
+        /^display-\d+$/,
+        /^fs(-.*)?$/,
+        /^fw(-.*)?$/,
+        /^lh(-.*)?$/,
+        /^font(-.*)?$/,
+        /^lead$/,
+        /^mark$/,
+        /^small$/,
         
-        // Spacing utilities actually used
-        'pt-2',
-        'mx-lg-2',
-        /^h-\d+$/,
+        // Interactive states
+        'active',
+        'disabled',
+        'show',
+        'hide',
+        'fade',
+        'collapse',
+        'collapsed',
+        'collapsing',
         
-        // Width utilities
-        /^w-\d+$/,
+        // Dark mode support - Bootstrap 5.3+ data-bs-theme attribute handling
+        // Keep all CSS that responds to [data-bs-theme="dark"]
+        /.*\[data-bs-theme.*\].*/,
+        // Keep dark mode utility classes
+        /.*-dark$/,
+        'table-dark',
+        'navbar-dark',
+        'bg-dark',
+        'text-light',
+        'border-dark',
+        'btn-dark',
+        // Keep light mode utility classes for completeness
+        'table-light', 
+        'navbar-light',
+        'bg-light',
+        'text-dark',
+        'border-light',
+        'btn-light',
         
         // Form validation
         'needs-validation',
@@ -131,52 +105,43 @@ export default {
         'valid-feedback',
         'invalid-feedback',
         
-        // Link utilities (comprehensive)
+        // Link utilities
         /^link(-.*)?$/,
-        'link-primary',
-        'link-offset-2',
-        'link-underline-opacity-25',
-        'link-underline-opacity-100-hover',
         
-        // Height utilities
+        // Additional classes found in codebase
+        'btn-close',
+        'vr', // Vertical rule
+        'align-center',
+        'align-items-center', 
+        /^mx-.*$/,
+        /^my-.*$/,
+        'overflow-hidden',
+        'btn-outline-info',
+        'btn-sm',
+        'navbar-toggler',
+        'navbar-toggler-icon',
+        'navbar-brand',
+        'navbar-collapse',
+        'navbar-nav',
+        'nav-item',
+        'nav-link',
+        'dropdown-toggle',
+        'dropdown-menu',
+        'dropdown-item',
         /^h-\d+$/,
-        'h-25',
-        'h-50', 
-        'h-75',
-        'h-100',
-        'h-200',
+        /^alert-dismissible$/,
         
-        // Interactive states
-        'active',
-        'disabled', 
-        'show',
-        'hide',
-        'fade',
-        'collapse',
-        'collapsed',
-        'collapsing',
-        'modal-backdrop'
+        // Dynamically generated classes from components
+        /^bg-.*-subtle$/,
+        /^text-bg-.*$/
       ],
-      // Enhanced extraction to catch more classes
+      // Standard extraction to catch more classes
       defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
-      // Remove unused CSS variables and keyframes for better optimization
+      // Remove unused CSS variables and keyframes
       variables: true,
       keyframes: true
     }),
-    
-    // Remove charset declarations
-    {
-      postcssPlugin: 'internal:charset-removal',
-      AtRule: {
-        charset: (atRule) => {
-          if (atRule.name === 'charset') {
-            atRule.remove();
-          }
-        }
-      }
-    },
-    
-    // Advanced CSS minification (must be last)
+    // Additional CSS optimization
     cssnano({
       preset: ['default', {
         discardComments: { removeAll: true },
@@ -184,9 +149,7 @@ export default {
         mergeLonghand: true,
         mergeRules: true,
         minifySelectors: true,
-        reduceTransforms: true,
-        normalizeUrl: false, // Keep URLs as-is to avoid breaking paths
-        svgo: false // Disable SVG optimization to avoid breaking inline SVGs
+        reduceTransforms: true
       }]
     })
   ]

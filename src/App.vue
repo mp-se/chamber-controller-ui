@@ -13,19 +13,35 @@
 
   <div v-if="!global.initialized" class="container text-center">
     <BsMessage
-      message="Initalizing Web interface"
+      message="Initializing Chamber Controller Web interface"
       class="h2"
       :dismissable="false"
       alert="info"
     ></BsMessage>
   </div>
 
-  <BsMenuBar v-if="global.initialized" :disabled="global.disabled" brand="Chamber Controller" />
+  <BsMenuBar 
+    v-if="global.initialized" 
+    :disabled="global.disabled" 
+    brand="Chamber Controller"
+    :menu-items="items"
+    :dark-mode="config.dark_mode"
+    :mdns="config.mdns || 'chamber-controller'"
+    @update:dark-mode="config.dark_mode = $event"
+  />
 
   <div class="container">
     <div>
       <p></p>
     </div>
+    <BsMessage
+      v-if="!status.connected"
+      message="No response from device, has it gone into sleep mode? No need to refresh the page, just turn on the device again"
+      class="h2"
+      :dismissable="false"
+      alert="danger"
+    ></BsMessage>
+
     <BsMessage
       v-if="global.isError"
       :close="close"
@@ -72,14 +88,13 @@
 </template>
 
 <script setup>
-import BsMenuBar from './components/BsMenuBar.vue'
-import BsFooter from './components/BsFooter.vue'
-import { onMounted, watch } from 'vue'
-import { global, status, config, saveConfigState } from '@/modules/pinia'
-import { storeToRefs } from 'pinia'
 
-const { disabled } = storeToRefs(global)
+import { watch, onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import { global, status, config } from '@/modules/pinia'
+// Removed unused logError, logDebug, logInfo imports
+import { items } from '@/modules/router'
 
+const polling = ref(null)
 const close = (alert) => {
   if (alert == 'danger') global.messageError = ''
   else if (alert == 'warning') global.messageWarning = ''
@@ -87,47 +102,73 @@ const close = (alert) => {
   else if (alert == 'info') global.messageInfo = ''
 }
 
-watch(disabled, () => {
+watch(() => global.disabled, () => {
   if (global.disabled) document.body.style.cursor = 'wait'
   else document.body.style.cursor = 'default'
 })
 
-onMounted(() => {
-  if (!global.initialized) {
-    showSpinner()
-    status.auth((success, data) => {
-      global.id = data.token
-
-      status.load((success) => {
-        global.platform = status.platform
-
-        if (success) {
-          config.load((success) => {
-            if (success) {
-              saveConfigState()
-              global.initialized = true
-              hideSpinner()
-            } else {
-              global.messageError =
-                'Failed to load configuration data from device, please try to reload page!'
-            }
-          })
-        } else {
-          global.messageError = 'Failed to load status from device, please try to reload page!'
-          hideSpinner()
-        }
-      })
-    })
-  }
-})
+function ping() {
+  status.ping()
+}
 
 function showSpinner() {
-  document.querySelector('#spinner').showModal()
+  const spinner = document.querySelector('#spinner')
+  if (spinner) spinner.showModal()
 }
 
 function hideSpinner() {
-  document.querySelector('#spinner').close()
+  const spinner = document.querySelector('#spinner')
+  if (spinner) spinner.close()
 }
+
+async function initializeApp() {
+  try {
+    showSpinner()
+    // Step 1: Authenticate with device
+    const authResult = await status.auth()
+    if (!authResult.success || !authResult.data || !authResult.data.token) {
+      global.messageError = 'Failed to authenticate with device, please try to reload page!'
+      hideSpinner()
+      return
+    }
+    global.id = authResult.data.token
+
+    // Step 2: Load device status
+    const statusSuccess = await status.load()
+    if (!statusSuccess) {
+      global.messageError = 'Failed to load status from device, please try to reload page!'
+      hideSpinner()
+      return
+    }
+    global.platform = status.platform
+
+    // Step 3: Load configuration
+    const configSuccess = await config.load()
+    if (!configSuccess) {
+      global.messageError = 'Failed to load configuration data from device, please try to reload page!'
+      hideSpinner()
+      return
+    }
+
+    // Success! Initialize the app
+    global.initialized = true
+    hideSpinner()
+  } catch (error) {
+    global.messageError = `Initialization failed: ${error.message}`
+    hideSpinner()
+  }
+}
+
+onBeforeMount(() => {
+  initializeApp()
+  polling.value = setInterval(ping, 7000)
+})
+
+onBeforeUnmount(() => {
+  if (polling.value) {
+    clearInterval(polling.value)
+  }
+})
 </script>
 
 <style>

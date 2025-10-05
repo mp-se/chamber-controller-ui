@@ -12,7 +12,7 @@
           class="spinner-border spinner-border-sm"
           role="status"
           aria-hidden="true"
-          :hidden="!global.disabled"
+          v-show="global.disabled"
         ></span>
         &nbsp;List files</button
       >&nbsp;
@@ -50,7 +50,7 @@
 <script setup>
 import { ref } from 'vue'
 import { global, config } from '@/modules/pinia'
-import { isValidJson, isValidFormData, isValidMqttData } from '@/modules/utils'
+import { isValidJson, isValidFormData, isValidMqttData } from '@mp-se/espframework-ui-components'
 
 const filesystemUsage = ref(null)
 const filesystemUsageText = ref(null)

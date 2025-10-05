@@ -34,6 +34,8 @@
             min="-5"
             max="5"
             step="0.01"
+            width="4"
+            unit="°C"
             :disabled="global.disabled"
           />
         </div>
@@ -46,6 +48,8 @@
             min="-5"
             max="5"
             step="0.01"
+            width="4"
+            unit="°C"
             :disabled="global.disabled"
           />
         </div>
@@ -99,7 +103,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Save
           </button>
@@ -113,8 +117,7 @@
 import { ref, onMounted } from 'vue'
 import { validateCurrentForm } from '@/modules/utils'
 import { global, config } from '@/modules/pinia'
-import { logDebug } from '@/modules/logger'
-import BsInputNumber from '@/components/BsInputNumber.vue'
+import { logDebug } from '@mp-se/espframework-ui-components'
 
 const sensorOptions = ref([{ label: '- not selected -', value: '' }])
 

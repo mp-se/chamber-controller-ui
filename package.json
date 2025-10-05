@@ -12,7 +12,9 @@
     "mock": "./node_modules/nodemon/bin/nodemon.js mock-server/index.js"
   },
   "dependencies": {
+    "@mp-se/espframework-ui-components": "git+https://github.com/mp-se/espframework-ui-components.git",
     "bootstrap": "^5.3.8",
+    "json-parse-even-better-errors": "^4.0.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.22",
     "vue-router": "^4.5.1"

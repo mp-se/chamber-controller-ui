@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import { logInfo } from '@/modules/logger'
+import { logInfo } from '@mp-se/espframework-ui-components'
 
 export const useGlobalStore = defineStore('global', {
   state: () => {
     return {
       id: '',
       platform: '',
+
       initialized: false,
       disabled: false,
       configChanged: false,
@@ -15,7 +16,7 @@ export const useGlobalStore = defineStore('global', {
       messageSuccess: '',
       messageInfo: '',
 
-      fetchTimout: 8000,
+      fetchTimeout: 8000,
       url: undefined
     }
   },
@@ -39,27 +40,20 @@ export const useGlobalStore = defineStore('global', {
       if (this.url !== undefined) return this.url
 
       if (import.meta.env.VITE_APP_HOST === undefined) {
-        logInfo('configStore:baseURL()', 'Using base URL from env', window.location.href)
+        logInfo('globalStore.baseURL()', 'Using base URL from window location', window.location.href)
         this.url = window.location.href
       } else {
-        logInfo('configStore:baseURL()', 'Using base URL from env', import.meta.env.VITE_APP_HOST)
+        logInfo('globalStore.baseURL()', 'Using base URL from env', import.meta.env.VITE_APP_HOST)
         this.url = import.meta.env.VITE_APP_HOST
       }
 
       return this.url
     },
     uiVersion() {
-      return import.meta.env.VITE_APP_VERSION
+      return import.meta.env.PACKAGE_VERSION || '0.0.0'
     },
     uiBuild() {
-      return import.meta.env.VITE_APP_BUILD
-    },
-    disabled32() {
-      if (this.disabled) return true
-
-      if (this.platform !== 'esp8266') return false
-
-      return true
+      return import.meta.env.VITE_BUILD_TIME || 'dev'
     }
   },
   actions: {

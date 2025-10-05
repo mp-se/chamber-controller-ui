@@ -18,6 +18,7 @@
             label="MDNS"
             help="Enter device name used on the network, the suffix .local will be added to this name"
             :badge="badge.deviceMdnsBadge()"
+            width="8"
             :disabled="global.disabled"
           >
           </BsInputText>
@@ -32,7 +33,6 @@
             v-model="config.temp_format"
             :options="tempOptions"
             label="Temperature Format"
-            width=""
             :disabled="global.disabled"
           ></BsInputRadio>
         </div>
@@ -42,7 +42,6 @@
             v-model="config.dark_mode"
             :options="uiOptions"
             label="User Interface"
-            width=""
             :disabled="global.disabled"
           ></BsInputRadio>
         </div>
@@ -77,6 +76,9 @@
         <div class="col-md-12">
           <hr />
         </div>
+
+        {{ global.disabled }} 
+
         <div class="col-md-12">
           <button
             type="submit"
@@ -87,7 +89,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Save</button
           >&nbsp;
@@ -102,7 +104,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Restart device</button
           >&nbsp;
@@ -117,7 +119,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
               aria-hidden="true"
-              :hidden="!global.disabled"
+              v-show="global.disabled"
             ></span>
             &nbsp;Restore factory defaults
           </button>
@@ -132,7 +134,7 @@ import { ref } from 'vue'
 import { validateCurrentForm, restart } from '@/modules/utils'
 import { global, config } from '@/modules/pinia'
 import * as badge from '@/modules/badge'
-import { logError } from '@/modules/logger'
+import { logError } from '@mp-se/espframework-ui-components'
 
 const tempOptions = ref([
   { label: 'Celsius °C', value: 'C' },
@@ -155,32 +157,61 @@ const restartOptions = ref([
   { label: '24 hours', value: 60 * 24 }
 ])
 
-const factory = () => {
-  global.clearMessages()
-  global.disabled = true
-  fetch(global.baseURL + 'api/factory', { headers: { Authorization: global.token } })
-    .then((res) => res.json())
-    .then((json) => {
-      if (json.success == true) {
-        global.messageSuccess = json.message
-        setTimeout(() => {
+const factory = async () => {
+  try {
+    global.clearMessages()
+    global.disabled = true
+    
+    const response = await fetch(global.baseURL + 'api/factory', {
+      headers: { Authorization: global.token },
+      signal: AbortSignal.timeout(global.fetchTimeout)
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const json = await response.json()
+    
+    if (json.success === true) {
+      global.messageSuccess = json.message + ' Reloading page in 2 seconds...'
+      
+      // Use setTimeout with proper cleanup
+      const reloadTimeout = setTimeout(() => {
+        try {
           location.reload(true)
-        }, 2000)
-      } else {
-        global.messageFailed = json.message
-        global.disabled = false
-      }
-    })
-    .catch((err) => {
-      logError('DeviceSettingsView:factory()', err)
-      global.messageError = 'Failed to do factory restore'
-      global.disabled = false
-    })
+        } catch (error) {
+          logError('DeviceSettingsView.factory.reload()', error)
+          // Fallback reload
+          window.location.reload()
+        }
+      }, 2000)
+      
+      // Clean up timeout on page unload
+      window.addEventListener('beforeunload', () => {
+        clearTimeout(reloadTimeout)
+      }, { once: true })
+      
+    } else {
+      global.messageError = json.message || 'Factory restore failed'
+    }
+    
+  } catch (err) {
+    logError('DeviceSettingsView.factory()', err)
+    global.messageError = 'Failed to perform factory restore: ' + (err.message || err)
+  } finally {
+    global.disabled = false
+  }
 }
 
-const saveSettings = () => {
-  if (!validateCurrentForm()) return
+const saveSettings = async () => {
+  try {
+    if (!validateCurrentForm()) return
 
-  config.saveAll()
+    await config.saveAll()
+  } catch (error) {
+    logError('DeviceSettingsView.saveSettings()', error)
+    global.messageError = 'Failed to save settings: ' + (error.message || error)
+  }
 }
 </script>
