@@ -53,7 +53,9 @@ export const useStatusStore = defineStore('status', {
           signal: AbortSignal.timeout(global.fetchTimeout)
         });
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const errorPayload = { status: response.status, statusText: response.statusText };
+          logDebug('statusStore:load() - http error', errorPayload);
+          return false;
         }
         const json = await response.json();
         logDebug('statusStore:load()', json);
@@ -106,7 +108,9 @@ export const useStatusStore = defineStore('status', {
           signal: AbortSignal.timeout(global.fetchTimeout)
         });
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const errorPayload = { status: response.status, statusText: response.statusText };
+          logDebug('statusStore:auth() - http error', errorPayload);
+          return { success: false, error: errorPayload };
         }
         const json = await response.json();
         logInfo('statusStore:auth()', 'Fetching /api/auth completed');
@@ -125,7 +129,10 @@ export const useStatusStore = defineStore('status', {
           signal: AbortSignal.timeout(global.fetchTimeout)
         })
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          const errorPayload = { status: response.status, statusText: response.statusText };
+          logDebug('statusStore:ping() - http error', errorPayload);
+          this.connected = false;
+          return false;
         }
         await response.json()
         // logInfo("statusStore.ping()", "Fetching /api/ping completed")

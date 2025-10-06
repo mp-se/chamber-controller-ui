@@ -104,9 +104,9 @@ const httpHeaderH2Callback = (opt) => {
   config.http_get_h2 = opt
 }
 
-const save = () => {
+const save = async () => {
   if (!validateCurrentForm()) return
 
-  config.saveAll()
+  await config.saveAll()
 }
 </script>

@@ -185,9 +185,11 @@ const save = async () => {
   try {
     if (!validateCurrentForm()) return
 
-    await config.saveAll()
-    global.messageInfo =
-      'If WIFI settings are changed, restart the device and enter the new URL of the device!'
+    const saved = await config.saveAll()
+    if (saved) {
+      global.messageInfo =
+        'If WIFI settings are changed, restart the device and enter the new URL of the device!'
+    }
   } catch (error) {
     logError('DeviceWifiView.save()', error)
     global.messageError = 'Failed to save WiFi settings: ' + (error.message || error)

@@ -55,10 +55,10 @@
 import { validateCurrentForm } from '@/modules/utils'
 import { global, config, status } from '@/modules/pinia'
 
-const save = () => {
+const save = async () => {
   if (!validateCurrentForm()) return
 
   global.clearMessages()
-  config.saveAll()
+  await config.saveAll()
 }
 </script>

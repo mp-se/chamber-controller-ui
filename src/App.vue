@@ -146,20 +146,25 @@ async function initializeApp() {
     }
     global.platform = status.platform
 
-    // Step 3: Load configuration
-    const configSuccess = await config.load()
-    if (!configSuccess) {
-      global.messageError = 'Failed to load configuration data from device, please try to reload page!'
-      hideSpinner()
-      return
-    }
+    // Step 3: Load configuration (callback style)
+    await new Promise((resolve) => {
+      config.load((success) => {
+        if (!success) {
+          global.messageError = 'Failed to load configuration data from device, please try to reload page!'
+          hideSpinner()
+          resolve()
+          return
+        }
 
-    // Save config snapshot for change detection
-    saveConfigState()
+        // Save config snapshot for change detection
+        saveConfigState()
 
-    // Success! Initialize the app
-    global.initialized = true
-    hideSpinner()
+        // Success! Initialize the app
+        global.initialized = true
+        hideSpinner()
+        resolve()
+      })
+    })
   } catch (error) {
     global.messageError = `Initialization failed: ${error.message}`
     hideSpinner()
@@ -179,6 +184,11 @@ const handleDarkModeUpdate = (newValue) => {
     console.error('Failed to set data-bs-theme on documentElement', e)
   }
 }
+
+// Watch for changes to config.dark_mode and call handleDarkModeUpdate
+watch(() => config.dark_mode, (newValue) => {
+  handleDarkModeUpdate(newValue)
+})
 
 onBeforeMount(() => {
   initializeApp()
