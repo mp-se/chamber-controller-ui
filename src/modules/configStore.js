@@ -49,282 +49,282 @@ export const useConfigStore = defineStore('config', {
   actions: {
     // callback(success)
     async load(callback) {
-      global.disabled = true;
+      global.disabled = true
       try {
-        logInfo('configStore.load()', 'Fetching /api/config');
+        logInfo('configStore.load()', 'Fetching /api/config')
         const response = await fetch(global.baseURL + 'api/config', {
           method: 'GET',
           headers: { Authorization: global.token },
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('configStore.load() - http error', errorPayload);
-          callback(false);
-          return;
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('configStore.load() - http error', errorPayload)
+          callback(false)
+          return
         }
-        const json = await response.json();
-        logDebug('configStore.load()', json);
-        Object.assign(this, json);
-        logInfo('configStore.load()', 'Fetching /api/config completed');
-        callback(true);
-        return;
+        const json = await response.json()
+        logDebug('configStore.load()', json)
+        Object.assign(this, json)
+        logInfo('configStore.load()', 'Fetching /api/config completed')
+        callback(true)
+        return
       } catch (err) {
-        logError('configStore.load()', err);
-        callback(false);
-        return;
+        logError('configStore.load()', err)
+        callback(false)
+        return
       } finally {
-        global.disabled = false;
+        global.disabled = false
       }
     },
     async sendConfig() {
-      global.disabled = true;
+      global.disabled = true
       try {
-        logInfo('configStore.sendConfig()', 'Sending /api/config');
-        const data = getConfigChanges();
-        logDebug('configStore.sendConfig()', data);
+        logInfo('configStore.sendConfig()', 'Sending /api/config')
+        const data = getConfigChanges()
+        logDebug('configStore.sendConfig()', data)
         if (JSON.stringify(data).length == 2) {
-          logInfo('configStore.sendConfig()', 'No config data to store, skipping step');
-          return true;
+          logInfo('configStore.sendConfig()', 'No config data to store, skipping step')
+          return true
         }
         const response = await fetch(global.baseURL + 'api/config', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: global.token },
           body: JSON.stringify(data),
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('configStore.sendConfig() - http error', errorPayload);
-          return false;
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('configStore.sendConfig() - http error', errorPayload)
+          return false
         }
-        logInfo('configStore.sendConfig()', 'Sending /api/config completed');
-        return true;
+        logInfo('configStore.sendConfig()', 'Sending /api/config completed')
+        return true
       } catch (err) {
-        logError('configStore.sendConfig()', err);
-        return false;
+        logError('configStore.sendConfig()', err)
+        return false
       } finally {
-        global.disabled = false;
+        global.disabled = false
       }
     },
     async sendWifiScan() {
-      global.disabled = true;
+      global.disabled = true
       try {
-        logInfo('configStore.sendWifiScan()', 'Sending /api/wifi');
+        logInfo('configStore.sendWifiScan()', 'Sending /api/wifi')
         const response = await fetch(global.baseURL + 'api/wifi', {
           headers: { Authorization: global.token },
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('configStore.sendWifiScan() - http error', errorPayload);
-          return false;
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('configStore.sendWifiScan() - http error', errorPayload)
+          return false
         }
-        logInfo('configStore.sendWifiScan()', 'Sending /api/wifi completed');
-        return true;
+        logInfo('configStore.sendWifiScan()', 'Sending /api/wifi completed')
+        return true
       } catch (err) {
-        logError('configStore.sendWifiScan()', err);
-        return false;
+        logError('configStore.sendWifiScan()', err)
+        return false
       } finally {
-        global.disabled = false;
+        global.disabled = false
       }
     },
     async getWifiScanStatus() {
       try {
-        logInfo('configStore.getWifiScanStatus()', 'Fetching /api/wifi/status');
+        logInfo('configStore.getWifiScanStatus()', 'Fetching /api/wifi/status')
         const response = await fetch(global.baseURL + 'api/wifi/status', {
           method: 'GET',
           headers: { Authorization: global.token },
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('configStore.getWifiScanStatus() - http error', errorPayload);
-          return { success: false, error: errorPayload };
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('configStore.getWifiScanStatus() - http error', errorPayload)
+          return { success: false, error: errorPayload }
         }
-        const json = await response.json();
-        logDebug('configStore.getWifiScanStatus()', json);
-        logInfo('configStore.getWifiScanStatus()', 'Fetching /api/wifi/status completed');
-        return { success: true, data: json };
+        const json = await response.json()
+        logDebug('configStore.getWifiScanStatus()', json)
+        logInfo('configStore.getWifiScanStatus()', 'Fetching /api/wifi/status completed')
+        return { success: true, data: json }
       } catch (err) {
-        logError('configStore.getWifiScanStatus()', err);
-        return { success: false, error: err };
+        logError('configStore.getWifiScanStatus()', err)
+        return { success: false, error: err }
       }
     },
     async sendSensorScan() {
-      global.disabled = true;
+      global.disabled = true
       try {
-        logInfo('configStore.sendSensorScan()', 'Sending /api/sensor');
+        logInfo('configStore.sendSensorScan()', 'Sending /api/sensor')
         const response = await fetch(global.baseURL + 'api/sensor', {
           headers: { Authorization: global.token },
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('configStore.sendSensorScan() - http error', errorPayload);
-          return false;
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('configStore.sendSensorScan() - http error', errorPayload)
+          return false
         }
-        logInfo('configStore.sendSensorScan()', 'Sending /api/sensor completed');
-        return true;
+        logInfo('configStore.sendSensorScan()', 'Sending /api/sensor completed')
+        return true
       } catch (err) {
-        logError('configStore.sendSensorScan()', err);
-        return false;
+        logError('configStore.sendSensorScan()', err)
+        return false
       } finally {
-        global.disabled = false;
+        global.disabled = false
       }
     },
     async getSensorScanStatus() {
       try {
-        logInfo('configStore.getSensorScanStatus()', 'Fetching /api/sensor/status');
+        logInfo('configStore.getSensorScanStatus()', 'Fetching /api/sensor/status')
         const response = await fetch(global.baseURL + 'api/sensor/status', {
           method: 'GET',
           headers: { Authorization: global.token },
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('configStore.getSensorScanStatus() - http error', errorPayload);
-          return { success: false, error: errorPayload };
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('configStore.getSensorScanStatus() - http error', errorPayload)
+          return { success: false, error: errorPayload }
         }
-        const json = await response.json();
-        logDebug('configStore.getSensorScanStatus()', json);
-        logInfo('configStore.getSensorScanStatus()', 'Fetching /api/sensor/status completed');
-        return { success: true, data: json };
+        const json = await response.json()
+        logDebug('configStore.getSensorScanStatus()', json)
+        logInfo('configStore.getSensorScanStatus()', 'Fetching /api/sensor/status completed')
+        return { success: true, data: json }
       } catch (err) {
-        logError('configStore.getSensorScanStatus()', err);
-        return { success: false, error: err };
+        logError('configStore.getSensorScanStatus()', err)
+        return { success: false, error: err }
       }
-    },  
+    },
     async saveAll() {
       try {
-        global.clearMessages();
-        global.disabled = true;
-        const configSuccess = await this.sendConfig();
+        global.clearMessages()
+        global.disabled = true
+        const configSuccess = await this.sendConfig()
         if (!configSuccess) {
-          global.messageError = 'Failed to store configuration to device';
-          return false;
+          global.messageError = 'Failed to store configuration to device'
+          return false
         }
-        global.messageSuccess = 'Configuration has been saved to device';
-        saveConfigState();
-        return true;
+        global.messageSuccess = 'Configuration has been saved to device'
+        saveConfigState()
+        return true
       } catch (error) {
-        logError('configStore.saveAll()', error);
-        global.messageError = 'Failed to save configuration';
-        return false;
+        logError('configStore.saveAll()', error)
+        global.messageError = 'Failed to save configuration'
+        return false
       } finally {
-        global.disabled = false;
+        global.disabled = false
       }
     },
     async sendFilesystemRequest(data, callback) {
-      global.disabled = true;
+      global.disabled = true
       try {
-        logInfo('configStore.sendFilesystemRequest()', 'Sending /api/filesystem');
+        logInfo('configStore.sendFilesystemRequest()', 'Sending /api/filesystem')
         const response = await fetch(global.baseURL + 'api/filesystem', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: global.token },
           body: JSON.stringify(data),
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          let body = null;
+          let body = null
           try {
-            body = await response.text();
+            body = await response.text()
           } catch {
-            body = null;
+            body = null
           }
-          const errorPayload = { status: response.status, statusText: response.statusText, body };
-          logDebug('configStore.sendFilesystemRequest() - http error', errorPayload);
-          callback(false, errorPayload);
-          return;
+          const errorPayload = { status: response.status, statusText: response.statusText, body }
+          logDebug('configStore.sendFilesystemRequest() - http error', errorPayload)
+          callback(false, errorPayload)
+          return
         }
-        const text = await response.text();
-        logDebug('configStore.sendFilesystemRequest()', text);
-        callback(true, text);
-        return;
+        const text = await response.text()
+        logDebug('configStore.sendFilesystemRequest()', text)
+        callback(true, text)
+        return
       } catch (err) {
-        logError('configStore.sendFilesystemRequest()', err);
-        callback(false, err);
-        return;
+        logError('configStore.sendFilesystemRequest()', err)
+        callback(false, err)
+        return
       } finally {
-        global.disabled = false;
+        global.disabled = false
       }
     },
     async runWifiScan(callback) {
       // callback(success, data)
-      global.disabled = true;
-      logInfo('configStore.runWifiScan()', 'Starting wifi scan');
+      global.disabled = true
+      logInfo('configStore.runWifiScan()', 'Starting wifi scan')
       try {
-        const success = await this.sendWifiScan();
+        const success = await this.sendWifiScan()
         if (!success) {
-          global.messageError = 'Failed to start wifi scan';
-          global.disabled = false;
-          callback(false, { error: 'Failed to start wifi scan' });
-          return;
+          global.messageError = 'Failed to start wifi scan'
+          global.disabled = false
+          callback(false, { error: 'Failed to start wifi scan' })
+          return
         }
 
         // Poll for scan completion
-        let result;
+        let result
         while (true) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          result = await this.getWifiScanStatus();
+          await new Promise((resolve) => setTimeout(resolve, 2000))
+          result = await this.getWifiScanStatus()
           if (!result.success) {
-            global.messageError = 'Failed to get wifi scan status';
-            global.disabled = false;
-            callback(false, { error: 'Failed to get wifi scan status' });
-            return;
+            global.messageError = 'Failed to get wifi scan status'
+            global.disabled = false
+            callback(false, { error: 'Failed to get wifi scan status' })
+            return
           }
           if (!result.data.status) {
             // scan finished
-            global.disabled = false;
-            callback(true, result.data);
-            return;
+            global.disabled = false
+            callback(true, result.data)
+            return
           }
           // scan still running, continue polling
         }
       } catch (err) {
-        logError('configStore.runWifiScan()', err);
-        global.disabled = false;
-        callback(false, err);
-        return;
+        logError('configStore.runWifiScan()', err)
+        global.disabled = false
+        callback(false, err)
+        return
       }
     },
     async runSensorScan(callback) {
       // callback(success, data)
-      global.disabled = true;
-      logInfo('configStore.runSensorScan()', 'Starting sensor scan');
+      global.disabled = true
+      logInfo('configStore.runSensorScan()', 'Starting sensor scan')
       try {
-        const success = await this.sendSensorScan();
+        const success = await this.sendSensorScan()
         if (!success) {
-          global.messageError = 'Failed to start sensor scan';
-          global.disabled = false;
-          callback(false, { error: 'Failed to start sensor scan' });
-          return;
+          global.messageError = 'Failed to start sensor scan'
+          global.disabled = false
+          callback(false, { error: 'Failed to start sensor scan' })
+          return
         }
 
         // Poll for scan completion
-        let result;
+        let result
         while (true) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          result = await this.getSensorScanStatus();
+          await new Promise((resolve) => setTimeout(resolve, 2000))
+          result = await this.getSensorScanStatus()
           if (!result.success) {
-            global.messageError = 'Failed to get sensor scan status';
-            global.disabled = false;
-            callback(false, { error: 'Failed to get sensor scan status' });
-            return;
+            global.messageError = 'Failed to get sensor scan status'
+            global.disabled = false
+            callback(false, { error: 'Failed to get sensor scan status' })
+            return
           }
           if (!result.data.status) {
             // scan finished
-            global.disabled = false;
-            callback(true, result.data);
-            return;
+            global.disabled = false
+            callback(true, result.data)
+            return
           }
           // scan still running, continue polling
         }
       } catch (err) {
-        logError('configStore.runSensorScan()', err);
-        global.disabled = false;
-        callback(false, err);
-        return;
+        logError('configStore.runSensorScan()', err)
+        global.disabled = false
+        callback(false, err)
+        return
       }
     }
   }

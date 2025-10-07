@@ -159,21 +159,21 @@ const factory = async () => {
   try {
     global.clearMessages()
     global.disabled = true
-    
+
     const response = await fetch(global.baseURL + 'api/factory', {
       headers: { Authorization: global.token },
       signal: AbortSignal.timeout(global.fetchTimeout)
     })
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
-    
+
     const json = await response.json()
-    
+
     if (json.success === true) {
       global.messageSuccess = json.message + ' Reloading page in 2 seconds...'
-      
+
       // Use setTimeout with proper cleanup
       const reloadTimeout = setTimeout(() => {
         try {
@@ -184,16 +184,18 @@ const factory = async () => {
           window.location.reload()
         }
       }, 2000)
-      
+
       // Clean up timeout on page unload
-      window.addEventListener('beforeunload', () => {
-        clearTimeout(reloadTimeout)
-      }, { once: true })
-      
+      window.addEventListener(
+        'beforeunload',
+        () => {
+          clearTimeout(reloadTimeout)
+        },
+        { once: true }
+      )
     } else {
       global.messageError = json.message || 'Factory restore failed'
     }
-    
   } catch (err) {
     logError('DeviceSettingsView.factory()', err)
     global.messageError = 'Failed to perform factory restore: ' + (err.message || err)

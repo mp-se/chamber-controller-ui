@@ -40,7 +40,7 @@ export const useStatusStore = defineStore('status', {
       pid_time_since_cooling: 0,
       pid_time_since_heating: 0,
       pid_time_since_idle: 0,
-      
+
       connected: true
     }
   },
@@ -48,76 +48,76 @@ export const useStatusStore = defineStore('status', {
   actions: {
     async load() {
       try {
-        logDebug('statusStore:load()', 'Fetching /api/status');
+        logDebug('statusStore:load()', 'Fetching /api/status')
         const response = await fetch(global.baseURL + 'api/status', {
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('statusStore:load() - http error', errorPayload);
-          return false;
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('statusStore:load() - http error', errorPayload)
+          return false
         }
-        const json = await response.json();
-        logDebug('statusStore:load()', json);
-        this.id = json.id;
-        this.rssi = json.rssi;
-        this.app_ver = json.app_ver;
-        this.app_build = json.app_build;
-        this.mdns = json.mdns;
-        this.platform = json.platform;
-        this.wifi_ssid = json.wifi_ssid;
-        this.ip = json.ip;
-        this.total_heap = Math.round(json.total_heap / 1024).toFixed(0);
-        this.free_heap = Math.round(json.free_heap / 1024).toFixed(0);
-        this.wifi_setup = json.wifi_setup;
-        this.uptime_seconds = json.uptime_seconds;
-        this.uptime_minutes = json.uptime_minutes;
-        this.uptime_hours = json.uptime_hours;
-        this.uptime_days = json.uptime_days;
-        this.pid_mode = json.pid_mode;
-        this.pid_state = json.pid_state;
-        this.pid_state_string = json.pid_state_string;
-        this.pid_beer_temp = json.pid_beer_temp;
-        this.pid_beer_temp_connected = json.pid_beer_temp_connected;
-        this.pid_fridge_temp = json.pid_fridge_temp;
-        this.pid_fridge_temp_connected = json.pid_fridge_temp_connected;
-        this.pid_beer_target_temp = json.pid_beer_target_temp;
-        this.pid_fridge_target_temp = json.pid_fridge_target_temp;
-        this.pid_temp_format = json.pid_temp_format;
-        this.pid_cooling_actuator_active = json.pid_cooling_actuator_active;
-        this.pid_heating_actuator_active = json.pid_heating_actuator_active;
-        this.pid_wait_time = json.pid_wait_time;
-        this.pid_time_since_cooling = json.pid_time_since_cooling;
-        this.pid_time_since_heating = json.pid_time_since_heating;
-        this.pid_time_since_idle = json.pid_time_since_idle;
-        logInfo('statusStore:load()', 'Fetching /api/status completed');
-        return true;
+        const json = await response.json()
+        logDebug('statusStore:load()', json)
+        this.id = json.id
+        this.rssi = json.rssi
+        this.app_ver = json.app_ver
+        this.app_build = json.app_build
+        this.mdns = json.mdns
+        this.platform = json.platform
+        this.wifi_ssid = json.wifi_ssid
+        this.ip = json.ip
+        this.total_heap = Math.round(json.total_heap / 1024).toFixed(0)
+        this.free_heap = Math.round(json.free_heap / 1024).toFixed(0)
+        this.wifi_setup = json.wifi_setup
+        this.uptime_seconds = json.uptime_seconds
+        this.uptime_minutes = json.uptime_minutes
+        this.uptime_hours = json.uptime_hours
+        this.uptime_days = json.uptime_days
+        this.pid_mode = json.pid_mode
+        this.pid_state = json.pid_state
+        this.pid_state_string = json.pid_state_string
+        this.pid_beer_temp = json.pid_beer_temp
+        this.pid_beer_temp_connected = json.pid_beer_temp_connected
+        this.pid_fridge_temp = json.pid_fridge_temp
+        this.pid_fridge_temp_connected = json.pid_fridge_temp_connected
+        this.pid_beer_target_temp = json.pid_beer_target_temp
+        this.pid_fridge_target_temp = json.pid_fridge_target_temp
+        this.pid_temp_format = json.pid_temp_format
+        this.pid_cooling_actuator_active = json.pid_cooling_actuator_active
+        this.pid_heating_actuator_active = json.pid_heating_actuator_active
+        this.pid_wait_time = json.pid_wait_time
+        this.pid_time_since_cooling = json.pid_time_since_cooling
+        this.pid_time_since_heating = json.pid_time_since_heating
+        this.pid_time_since_idle = json.pid_time_since_idle
+        logInfo('statusStore:load()', 'Fetching /api/status completed')
+        return true
       } catch (err) {
-        logError('statusStore:load()', 'Fetching /api/status failed', err);
-        return false;
+        logError('statusStore:load()', 'Fetching /api/status failed', err)
+        return false
       }
     },
 
     async auth() {
       try {
-        logDebug('statusStore:auth()', 'Fetching /api/auth');
-        var base = btoa('espfwk:password');
+        logDebug('statusStore:auth()', 'Fetching /api/auth')
+        var base = btoa('espfwk:password')
         const response = await fetch(global.baseURL + 'api/auth', {
           method: 'GET',
           headers: { Authorization: 'Basic ' + base },
           signal: AbortSignal.timeout(global.fetchTimeout)
-        });
+        })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('statusStore:auth() - http error', errorPayload);
-          return { success: false, error: errorPayload };
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('statusStore:auth() - http error', errorPayload)
+          return { success: false, error: errorPayload }
         }
-        const json = await response.json();
-        logInfo('statusStore:auth()', 'Fetching /api/auth completed');
-        return { success: true, data: json };
+        const json = await response.json()
+        logInfo('statusStore:auth()', 'Fetching /api/auth completed')
+        return { success: true, data: json }
       } catch (err) {
-        logError('statusStore:auth()', 'Fetching /api/auth failed', err);
-        return { success: false, error: err };
+        logError('statusStore:auth()', 'Fetching /api/auth failed', err)
+        return { success: false, error: err }
       }
     },
 
@@ -129,10 +129,10 @@ export const useStatusStore = defineStore('status', {
           signal: AbortSignal.timeout(global.fetchTimeout)
         })
         if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText };
-          logDebug('statusStore:ping() - http error', errorPayload);
-          this.connected = false;
-          return false;
+          const errorPayload = { status: response.status, statusText: response.statusText }
+          logDebug('statusStore:ping() - http error', errorPayload)
+          this.connected = false
+          return false
         }
         await response.json()
         // logInfo("statusStore.ping()", "Fetching /api/ping completed")

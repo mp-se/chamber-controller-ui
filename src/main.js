@@ -9,7 +9,6 @@ app.use(piniaInstance)
 import router from './modules/router.js'
 app.use(router)
 
-
 // Import all components from the ESP Framework UI Components library
 import {
   // Bootstrap Components

@@ -117,7 +117,7 @@ const confirmDeleteCallback = (result) => {
     }
 
     config.sendFilesystemRequest(data, (success, text) => {
-      logDebug('AdancedFilesFragment.confirmDeleteCallback()', success), text
+      ;(logDebug('AdancedFilesFragment.confirmDeleteCallback()', success), text)
       filesDelete.value = []
       global.disabled = false
     })

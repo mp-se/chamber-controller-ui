@@ -20,14 +20,14 @@
     ></BsMessage>
   </div>
 
-  <BsMenuBar 
-    v-if="global.initialized" 
-    :disabled="global.disabled" 
+  <BsMenuBar
+    v-if="global.initialized"
+    :disabled="global.disabled"
     brand="Chamber Controller"
-     :menu-items="items"
-     :dark-mode="config.dark_mode"
-     :mdns="config.mdns"
-     :config-changed="global.configChanged"
+    :menu-items="items"
+    :dark-mode="config.dark_mode"
+    :mdns="config.mdns"
+    :config-changed="global.configChanged"
     @update:dark-mode="handleDarkModeUpdate"
   />
 
@@ -89,7 +89,6 @@
 </template>
 
 <script setup>
-
 import { watch, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import { global, status, config, saveConfigState } from '@/modules/pinia'
 // Removed unused logError, logDebug, logInfo imports
@@ -106,10 +105,13 @@ const close = (alert) => {
   else if (alert == 'info') global.messageInfo = ''
 }
 
-watch(() => global.disabled, () => {
-  if (global.disabled) document.body.style.cursor = 'wait'
-  else document.body.style.cursor = 'default'
-})
+watch(
+  () => global.disabled,
+  () => {
+    if (global.disabled) document.body.style.cursor = 'wait'
+    else document.body.style.cursor = 'default'
+  }
+)
 
 function ping() {
   status.ping()
@@ -150,7 +152,8 @@ async function initializeApp() {
     await new Promise((resolve) => {
       config.load((success) => {
         if (!success) {
-          global.messageError = 'Failed to load configuration data from device, please try to reload page!'
+          global.messageError =
+            'Failed to load configuration data from device, please try to reload page!'
           hideSpinner()
           resolve()
           return
@@ -186,9 +189,12 @@ const handleDarkModeUpdate = (newValue) => {
 }
 
 // Watch for changes to config.dark_mode and call handleDarkModeUpdate
-watch(() => config.dark_mode, (newValue) => {
-  handleDarkModeUpdate(newValue)
-})
+watch(
+  () => config.dark_mode,
+  (newValue) => {
+    handleDarkModeUpdate(newValue)
+  }
+)
 
 onBeforeMount(() => {
   initializeApp()

@@ -15,7 +15,8 @@
           class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
           href="https://github.com/mp-se/chamber-controller"
           target="_blank"
-        >Chamber controller</a>
+          >Chamber controller</a
+        >
       </div>
     </div>
 

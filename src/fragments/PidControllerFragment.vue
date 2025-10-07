@@ -107,7 +107,6 @@ const saveSettings = async () => {
 
     logInfo('PidControllerFragment.saveSettings()', 'Sending /api/mode completed')
     global.messageSuccess = 'PID controller settings updated successfully'
-
   } catch (err) {
     logError('PidControllerFragment.saveSettings()', err)
     global.messageError = 'Failed to update PID controller: ' + (err.message || err)

@@ -17,37 +17,37 @@
         </div>
 
         <div class="col-md-12">
-            <BsFileUpload
-              name="upload"
-              id="upload"
-              label="Select firmware file"
-              accept=".bin"
-              help="Choose the firmware file that will be used to update the device"
-              :disabled="global.disabled"
-              @change="onFileChange"
-            >
-            </BsFileUpload>
+          <BsFileUpload
+            name="upload"
+            id="upload"
+            label="Select firmware file"
+            accept=".bin"
+            help="Choose the firmware file that will be used to update the device"
+            :disabled="global.disabled"
+            @change="onFileChange"
+          >
+          </BsFileUpload>
         </div>
 
         <div class="col-md-3">
           <p></p>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              id="upload-btn"
-              value="upload"
-              data-bs-toggle="tooltip"
-              title="Update the device with the selected firmware"
-              :disabled="global.disabled || !hasFileSelected"
-            >
-              <span
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-                v-show="global.disabled"
-              ></span>
-              &nbsp;Flash firmware
-            </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="upload-btn"
+            value="upload"
+            data-bs-toggle="tooltip"
+            title="Update the device with the selected firmware"
+            :disabled="global.disabled || !hasFileSelected"
+          >
+            <span
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+              v-show="global.disabled"
+            ></span>
+            &nbsp;Flash firmware
+          </button>
         </div>
 
         <div v-if="progress > 0" class="col-md-12">
@@ -76,7 +76,7 @@ function upload() {
 
   function errorAction(e) {
     logError('FirmwareView.upload()', `Upload ${e.type}:`, e)
-    
+
     let errorMessage = 'File upload failed!'
     if (e.type === 'timeout') {
       errorMessage = 'File upload timed out after 3 minutes. Please try again.'
@@ -85,7 +85,7 @@ function upload() {
     } else if (e.type === 'abort') {
       errorMessage = 'File upload was cancelled.'
     }
-    
+
     global.messageError = errorMessage
     global.disabled = false
     progress.value = 0
@@ -120,7 +120,7 @@ function upload() {
         global.messageSuccess =
           'File upload completed, waiting for device to restart before doing refresh!'
         global.messageFailed = ''
-        
+
         // Use a more reliable redirect with timeout cleanup
         const redirectTimeout = setTimeout(() => {
           try {
@@ -131,12 +131,15 @@ function upload() {
             window.location.reload()
           }
         }, 10000)
-        
+
         // Clean up timeout on page unload
-        window.addEventListener('beforeunload', () => {
-          clearTimeout(redirectTimeout)
-        }, { once: true })
-        
+        window.addEventListener(
+          'beforeunload',
+          () => {
+            clearTimeout(redirectTimeout)
+          },
+          { once: true }
+        )
       } else {
         global.messageError = `Upload failed with status ${xhr.status}: ${xhr.statusText || 'Unknown error'}`
       }

@@ -37,23 +37,23 @@ export function validateCurrentForm() {
 export async function restart() {
   global.clearMessages()
   global.disabled = true
-  
+
   const abortController = new AbortController()
   let redirectTimeout = null
-  
+
   try {
     const response = await fetch(global.baseURL + 'api/restart', {
       headers: { Authorization: global.token },
       signal: abortController.signal
     })
     const json = await response.json()
-    
+
     logDebug('utils.restart()', json)
     if (json.status == true) {
       global.messageSuccess =
         json.message + ' Redirecting to http://' + config.mdns + '.local in 8 seconds.'
       logInfo('utils.restart()', 'Scheduling refresh of UI')
-      
+
       redirectTimeout = setTimeout(() => {
         try {
           location.href = 'http://' + config.mdns + '.local'
@@ -63,13 +63,16 @@ export async function restart() {
           window.location.reload()
         }
       }, 8000)
-      
+
       // Clean up on page unload
-      window.addEventListener('beforeunload', () => {
-        if (redirectTimeout) clearTimeout(redirectTimeout)
-        abortController.abort()
-      }, { once: true })
-      
+      window.addEventListener(
+        'beforeunload',
+        () => {
+          if (redirectTimeout) clearTimeout(redirectTimeout)
+          abortController.abort()
+        },
+        { once: true }
+      )
     } else {
       global.messageError = json.message
       global.disabled = false

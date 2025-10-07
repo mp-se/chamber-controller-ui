@@ -168,7 +168,7 @@ const items = ref([
         label: 'Influxdb v2',
         badge: badge.pushInfluxdb2Badge,
         path: '/push/influxdb'
-      },
+      }
       // {
       //   label: 'MQTT',
       //   badge: badge.pushMqttBadge,
