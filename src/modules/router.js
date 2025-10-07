@@ -8,10 +8,7 @@ import DeviceSettingsView from '@/views/DeviceSettingsView.vue'
 import DevicePidView from '@/views/DevicePidView.vue'
 import DeviceHardwareView from '@/views/DeviceHardwareView.vue'
 import DeviceWifiView from '@/views/DeviceWifiView.vue'
-import PushHttpPostView from '@/views/PushHttpPostView.vue'
-import PushHttpGetView from '@/views/PushHttpGetView.vue'
 import PushInfluxdbView from '@/views/PushInfluxdbView.vue'
-import PushMqttView from '@/views/PushMqttView.vue'
 import PushBluetoothView from '@/views/PushBluetoothView.vue'
 import FirmwareView from '@/views/FirmwareView.vue'
 import SupportView from '@/views/SupportView.vue'
@@ -51,24 +48,9 @@ const routes = [
     component: FirmwareView
   },
   {
-    path: '/push/http-post',
-    name: 'push-http-post',
-    component: PushHttpPostView
-  },
-  {
-    path: '/push/http-get',
-    name: 'push-http-get',
-    component: PushHttpGetView
-  },
-  {
     path: '/push/influxdb',
     name: 'push-influxdb',
     component: PushInfluxdbView
-  },
-  {
-    path: '/push/mqtt',
-    name: 'push-mqtt',
-    component: PushMqttView
   },
   {
     path: '/push/bluetooth',
@@ -159,26 +141,11 @@ const items = ref([
         badge: badge.pushBluetoothBadge,
         path: '/push/bluetooth'
       },
-      // {
-      //   label: 'HTTP Get',
-      //   badge: badge.pushHttpGetBadge,
-      //   path: '/push/http-get'
-      // },
       {
         label: 'Influxdb v2',
         badge: badge.pushInfluxdb2Badge,
         path: '/push/influxdb'
       }
-      // {
-      //   label: 'MQTT',
-      //   badge: badge.pushMqttBadge,
-      //   path: '/push/mqtt'
-      // },
-      // {
-      //   label: 'HTTP Post',
-      //   badge: badge.pushHttpPost1Badge,
-      //   path: '/push/http-post'
-      // }
     ]
   },
   {

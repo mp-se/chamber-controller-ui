@@ -33,7 +33,7 @@
 <script setup>
 import { computed } from 'vue'
 import { status, config } from '@/modules/pinia'
-import { formatTime } from '@/modules/utils'
+import { formatTime } from '@mp-se/espframework-ui-components'
 
 const beerTemp = computed(() => {
   // if (config.beer_sensor_id == '') return '--' + '°' + config.temp_format
