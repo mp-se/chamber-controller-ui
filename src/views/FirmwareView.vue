@@ -9,10 +9,11 @@
         <div style="col-md-12">
           <p>
             Selet the firmware file that matches your device. Platform:
-            <span class="badge bg-secondary">{{ status.platform }}</span>
-            , Version: <span class="badge bg-secondary">{{ status.app_ver }}</span> ({{
-              status.app_build
-            }})
+            <span class="badge bg-secondary">{{ global.platform }}</span>
+            , Version:
+            <span class="badge bg-secondary">{{ global.app_ver }}</span> ({{ global.app_build }}) ,
+            Hardware: <span class="badge bg-secondary">{{ global.hardware }}</span> , Filename:
+            <span class="badge bg-secondary">{{ global.firmware_file }}</span>
           </p>
         </div>
 
@@ -22,7 +23,7 @@
             id="upload"
             label="Select firmware file"
             accept=".bin"
-            help="Choose the firmware file that will be used to update the device"
+            help="Choose the firmware file (.bin) that will be used to update the device. The upload button will be enabled once a file is selected."
             :disabled="global.disabled"
             @change="onFileChange"
           >
@@ -37,7 +38,11 @@
             id="upload-btn"
             value="upload"
             data-bs-toggle="tooltip"
-            title="Update the device with the selected firmware"
+            :title="
+              !hasFileSelected
+                ? 'Please select a firmware file first'
+                : 'Update the device with the selected firmware'
+            "
             :disabled="global.disabled || !hasFileSelected"
           >
             <span
@@ -61,65 +66,43 @@
 
 <script setup>
 import { ref } from 'vue'
-import { global, status } from '@/modules/pinia'
+import { global } from '@/modules/pinia'
+import { sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 import { logDebug, logError } from '@mp-se/espframework-ui-components'
 
 const progress = ref(0)
 const hasFileSelected = ref(false)
 
-function onFileChange(event) {
-  hasFileSelected.value = event.target.files.length > 0
+const onFileChange = (event) => {
+  const fileElement = event.target
+  hasFileSelected.value = fileElement.files && fileElement.files.length > 0
 }
 
-function upload() {
+async function upload() {
   const fileElement = document.getElementById('upload')
 
-  function errorAction(e) {
-    logError('FirmwareView.upload()', `Upload ${e.type}:`, e)
-
-    let errorMessage = 'File upload failed!'
-    if (e.type === 'timeout') {
-      errorMessage = 'File upload timed out after 3 minutes. Please try again.'
-    } else if (e.type === 'error') {
-      errorMessage = 'Network error during file upload. Check connection and try again.'
-    } else if (e.type === 'abort') {
-      errorMessage = 'File upload was cancelled.'
-    }
-
-    global.messageError = errorMessage
-    global.disabled = false
-    progress.value = 0
-  }
-
-  hasFileSelected.value = fileElement.files.length > 0
-  if (!hasFileSelected.value) {
-    global.messageFailed = 'You need to select one file with firmware to upload'
+  if (fileElement.files.length === 0) {
+    global.messageError = 'You need to select one file with firmware to upload'
   } else {
     global.disabled = true
     logDebug('FirmwareView.upload()', 'Selected file: ' + fileElement.files[0].name)
 
-    const xhr = new XMLHttpRequest()
-    xhr.timeout = 1000 * 180 // 180 s
     progress.value = 0
 
-    xhr.onabort = function (e) {
-      errorAction(e)
-    }
-    xhr.onerror = function (e) {
-      errorAction(e)
-    }
-    xhr.ontimeout = function (e) {
-      errorAction(e)
-    }
-
-    xhr.onloadstart = function () {}
-
-    xhr.onloadend = function () {
+    try {
+      const res = await http.uploadFile('api/firmware', fileElement.files[0], {
+        timeoutMs: 180000,
+        onProgress: (ev) => {
+          if (ev.lengthComputable) {
+            progress.value = Math.round((ev.loaded / ev.total) * 100)
+          }
+        }
+      })
       progress.value = 100
-      if (xhr.status == 200) {
+      if (res.success) {
         global.messageSuccess =
           'File upload completed, waiting for device to restart before doing refresh!'
-        global.messageFailed = ''
+        global.messageError = ''
 
         // Use a more reliable redirect with timeout cleanup
         const redirectTimeout = setTimeout(() => {
@@ -141,30 +124,13 @@ function upload() {
           { once: true }
         )
       } else {
-        global.messageError = `Upload failed with status ${xhr.status}: ${xhr.statusText || 'Unknown error'}`
+        global.messageError = `Upload failed: ${res.status}`
       }
+    } catch (err) {
+      global.messageError = `Upload error: ${err.message || err}`
+    } finally {
       global.disabled = false
     }
-
-    // The update only seams to work when loaded from the device (i.e. when CORS is not used)
-    xhr.upload.addEventListener(
-      'progress',
-      (e) => {
-        progress.value = (e.loaded / e.total) * 100
-      },
-      false
-    )
-
-    const fileData = new FormData()
-    fileData.onprogress = function (e) {
-      logDebug('FirmwareView.upload()', 'progress2: ' + e.loaded + ',' + e.total + ',' + xhr.status)
-    }
-
-    fileData.append('file', fileElement.files[0])
-
-    xhr.open('POST', global.baseURL + 'api/firmware')
-    xhr.setRequestHeader('Authorization', global.token)
-    xhr.send(fileData)
   }
 }
 </script>

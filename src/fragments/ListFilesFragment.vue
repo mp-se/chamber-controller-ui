@@ -49,7 +49,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import { global, config } from '@/modules/pinia'
+import { global } from '@/modules/pinia'
+import { sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 import { isValidJson, isValidFormData, isValidMqttData } from '@mp-se/espframework-ui-components'
 
 const filesystemUsage = ref(null)
@@ -68,8 +69,10 @@ const viewFile = (f) => {
     file: f
   }
 
-  config.sendFilesystemRequest(data, (success, text) => {
-    if (success) {
+  ;(async () => {
+    const res = await http.filesystemRequest(data)
+    if (res && res.success) {
+      const text = res.text
       if (isValidJson(text)) fileData.value = JSON.stringify(JSON.parse(text), null, 2)
       else if (isValidFormData(text)) fileData.value = text.replaceAll('&', '&\n\r')
       else if (isValidMqttData(text)) fileData.value = text.replaceAll('|', '|\n\r')
@@ -77,7 +80,7 @@ const viewFile = (f) => {
     }
 
     global.disabled = false
-  })
+  })()
 }
 
 const listFilesView = () => {
@@ -90,17 +93,18 @@ const listFilesView = () => {
     command: 'dir'
   }
 
-  config.sendFilesystemRequest(data, (success, text) => {
-    if (success) {
-      var json = JSON.parse(text)
+  ;(async () => {
+    const res = await http.filesystemRequest(data)
+    if (res && res.success) {
+      var json = JSON.parse(res.text)
       filesystemUsage.value = (json.used / json.total) * 100
       filesystemUsageText.value =
         'Total space ' +
-        json.total / 1024 +
+        new Number(json.total / 1024).toFixed(1) +
         'kb, Free space ' +
-        json.free / 1024 +
+        new Number(json.free / 1024).toFixed(1) +
         'kb, Used space ' +
-        json.used / 1024 +
+        new Number(json.used / 1024).toFixed(1) +
         'kb'
 
       for (var f in json.files) {
@@ -109,6 +113,6 @@ const listFilesView = () => {
     }
 
     global.disabled = false
-  })
+  })()
 }
 </script>

@@ -47,7 +47,7 @@ import {
 } from '@mp-se/espframework-ui-components'
 
 // Import local fragments
-import AdvancedFileFragment from '@/fragments/AdvancedFileFragment.vue'
+import AdvancedFilesFragment from '@/fragments/AdvancedFilesFragment.vue'
 import EnableCorsFragment from '@/fragments/EnableCorsFragment.vue'
 import ListFilesFragment from '@/fragments/ListFilesFragment.vue'
 
@@ -92,7 +92,9 @@ app.component('IconExclamationTriangle', IconExclamationTriangle)
 app.component('IconInfoCircle', IconInfoCircle)
 
 // Register Fragment components (ESP Framework specific)
-app.component('AdvancedFileFragment', AdvancedFileFragment)
+app.component('EnableCorsFragment', EnableCorsFragment)
+app.component('ListFilesFragment', ListFilesFragment)
+app.component('AdvancedFilesFragment', AdvancedFilesFragment)
 app.component('EnableCorsFragment', EnableCorsFragment)
 app.component('ListFilesFragment', ListFilesFragment)
 

@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <AdvancedFileFragment v-if="!hideAdvanced"></AdvancedFileFragment>
+  <AdvancedFilesFragment v-if="!hideAdvanced"></AdvancedFilesFragment>
 
     <div class="row gy-4" v-if="!hideAdvanced">
       <p></p>
@@ -45,7 +45,7 @@
 import { ref } from 'vue'
 import { global } from '@/modules/pinia'
 import ListFilesFragment from '@/fragments/ListFilesFragment.vue'
-import AdvancedFileFragment from '@/fragments/AdvancedFileFragment.vue'
+import AdvancedFilesFragment from '@/fragments/AdvancedFilesFragment.vue'
 import EnableCorsFragment from '@/fragments/EnableCorsFragment.vue'
 
 const hideAdvanced = ref(true)
