@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { validateCurrentForm } from '@/modules/utils'
+import { validateCurrentForm } from '@mp-se/espframework-ui-components'
 import { global, config, status } from '@/modules/pinia'
 
 const save = async () => {

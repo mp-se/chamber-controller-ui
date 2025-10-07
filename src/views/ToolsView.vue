@@ -30,7 +30,7 @@
       </div>
     </div>
 
-  <AdvancedFilesFragment v-if="!hideAdvanced"></AdvancedFilesFragment>
+    <AdvancedFilesFragment v-if="!hideAdvanced"></AdvancedFilesFragment>
 
     <div class="row gy-4" v-if="!hideAdvanced">
       <p></p>

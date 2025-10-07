@@ -14,7 +14,6 @@
   <div v-if="!global.initialized" class="container text-center">
     <BsMessage
       message="Initializing Chamber Controller Web interface"
-      class="h2"
       :dismissable="false"
       alert="info"
     ></BsMessage>
@@ -38,7 +37,6 @@
     <BsMessage
       v-if="!status.connected"
       message="No response from device, has it gone into sleep mode? No need to refresh the page, just turn on the device again"
-      class="h2"
       :dismissable="false"
       alert="danger"
     ></BsMessage>
@@ -91,9 +89,10 @@
 <script setup>
 import { watch, onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import { global, status, config, saveConfigState } from '@/modules/pinia'
-// Removed unused logError, logDebug, logInfo imports
+import { sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 import { items as staticItems } from '@/modules/router'
 import { computed } from 'vue'
+import { logError } from '@mp-se/espframework-ui-components'
 
 const items = computed(() => JSON.parse(JSON.stringify(staticItems.value)))
 
@@ -114,7 +113,10 @@ watch(
 )
 
 function ping() {
-  status.ping()
+  ;(async () => {
+    const ok = await http.ping()
+    status.connected = ok
+  })()
 }
 
 function showSpinner() {
@@ -130,46 +132,37 @@ function hideSpinner() {
 async function initializeApp() {
   try {
     showSpinner()
-    // Step 1: Authenticate with device
-    const authResult = await status.auth()
-    if (!authResult.success || !authResult.data || !authResult.data.token) {
+
+    // Step 1: Authenticate with device (http client owns token)
+    const base = btoa('chamber:password')
+    const authOk = await http.auth(base)
+    if (!authOk) {
       global.messageError = 'Failed to authenticate with device, please try to reload page!'
-      hideSpinner()
       return
     }
-    global.id = authResult.data.token
 
     // Step 2: Load device status
     const statusSuccess = await status.load()
     if (!statusSuccess) {
       global.messageError = 'Failed to load status from device, please try to reload page!'
-      hideSpinner()
       return
     }
-    global.platform = status.platform
 
-    // Step 3: Load configuration (callback style)
-    await new Promise((resolve) => {
-      config.load((success) => {
-        if (!success) {
-          global.messageError =
-            'Failed to load configuration data from device, please try to reload page!'
-          hideSpinner()
-          resolve()
-          return
-        }
+    // Step 3: Load configuration
+    const configSuccess = await config.load()
+    if (!configSuccess) {
+      global.messageError =
+        'Failed to load configuration data from device, please try to reload page!'
+      return
+    }
 
-        // Save config snapshot for change detection
-        saveConfigState()
-
-        // Success! Initialize the app
-        global.initialized = true
-        hideSpinner()
-        resolve()
-      })
-    })
+    // Success! Initialize the app
+    saveConfigState()
+    global.initialized = true
   } catch (error) {
+    logError('App.initializeApp()', error)
     global.messageError = `Initialization failed: ${error.message}`
+  } finally {
     hideSpinner()
   }
 }

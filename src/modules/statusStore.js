@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
-import { global } from '@/modules/pinia'
+import { sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 import { logDebug, logInfo, logError } from '@mp-se/espframework-ui-components'
-
-// Declare managedFetch at module level, outside Pinia store
 
 export const useStatusStore = defineStore('status', {
   state: () => {
@@ -49,15 +47,7 @@ export const useStatusStore = defineStore('status', {
     async load() {
       try {
         logDebug('statusStore:load()', 'Fetching /api/status')
-        const response = await fetch(global.baseURL + 'api/status', {
-          signal: AbortSignal.timeout(global.fetchTimeout)
-        })
-        if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText }
-          logDebug('statusStore:load() - http error', errorPayload)
-          return false
-        }
-        const json = await response.json()
+        const json = await http.getJson('api/status')
         logDebug('statusStore:load()', json)
         this.id = json.id
         this.rssi = json.rssi
@@ -94,53 +84,6 @@ export const useStatusStore = defineStore('status', {
         return true
       } catch (err) {
         logError('statusStore:load()', 'Fetching /api/status failed', err)
-        return false
-      }
-    },
-
-    async auth() {
-      try {
-        logDebug('statusStore:auth()', 'Fetching /api/auth')
-        var base = btoa('espfwk:password')
-        const response = await fetch(global.baseURL + 'api/auth', {
-          method: 'GET',
-          headers: { Authorization: 'Basic ' + base },
-          signal: AbortSignal.timeout(global.fetchTimeout)
-        })
-        if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText }
-          logDebug('statusStore:auth() - http error', errorPayload)
-          return { success: false, error: errorPayload }
-        }
-        const json = await response.json()
-        logInfo('statusStore:auth()', 'Fetching /api/auth completed')
-        return { success: true, data: json }
-      } catch (err) {
-        logError('statusStore:auth()', 'Fetching /api/auth failed', err)
-        return { success: false, error: err }
-      }
-    },
-
-    async ping() {
-      try {
-        // logInfo("statusStore.ping()", "Fetching /api/ping")
-        const response = await fetch(global.baseURL + 'api/ping', {
-          method: 'GET',
-          signal: AbortSignal.timeout(global.fetchTimeout)
-        })
-        if (!response.ok) {
-          const errorPayload = { status: response.status, statusText: response.statusText }
-          logDebug('statusStore:ping() - http error', errorPayload)
-          this.connected = false
-          return false
-        }
-        await response.json()
-        // logInfo("statusStore.ping()", "Fetching /api/ping completed")
-        this.connected = true
-        return true
-      } catch (err) {
-        logError('statusStore.ping()', err)
-        this.connected = false
         return false
       }
     }

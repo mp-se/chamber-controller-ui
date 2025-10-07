@@ -115,43 +115,37 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { validateCurrentForm } from '@/modules/utils'
+import { validateCurrentForm } from '@mp-se/espframework-ui-components'
 import { global, config } from '@/modules/pinia'
 import { logDebug } from '@mp-se/espframework-ui-components'
 
 const sensorOptions = ref([{ label: '- not selected -', value: '' }])
 
-onMounted(() => {
+onMounted(async () => {
   global.disabled = true
-  config.runSensorScan((success, data) => {
-    if (success) {
-      logDebug('DeviceHardwareView::onMounted()', data)
+  const res = await config.runSensorScan()
+  if (res && res.success && res.data) {
+    const data = res.data
+    logDebug('DeviceHardwareView::onMounted()', data)
 
-      var fridge = false,
-        beer = false
+    let fridge = false
+    let beer = false
 
-      for (var s in data.sensors) {
-        if (s == config.beer_sensor_id) beer = true
-        if (s == config.fridge_sensor_id) fridge = true
+    for (const s of data.sensors) {
+      if (s == config.beer_sensor_id) beer = true
+      if (s == config.fridge_sensor_id) fridge = true
 
-        sensorOptions.value.push({ label: data.sensors[s], value: data.sensors[s] })
-      }
-
-      if (!beer)
-        sensorOptions.value.push({
-          label: config.beer_sensor_id + ' (not detected)',
-          value: config.beer_sensor_id
-        })
-
-      if (!fridge)
-        sensorOptions.value.push({
-          label: config.fridge_sensor_id + ' (not detected)',
-          value: config.fridge_sensor_id
-        })
+      sensorOptions.value.push({ label: s, value: s })
     }
 
-    global.disabled = false
-  })
+    if (!beer && config.beer_sensor_id)
+      sensorOptions.value.push({ label: config.beer_sensor_id + ' (not detected)', value: config.beer_sensor_id })
+
+    if (!fridge && config.fridge_sensor_id)
+      sensorOptions.value.push({ label: config.fridge_sensor_id + ' (not detected)', value: config.fridge_sensor_id })
+  }
+
+  global.disabled = false
 })
 
 const saveSettings = async () => {

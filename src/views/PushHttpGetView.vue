@@ -89,7 +89,8 @@
 </template>
 
 <script setup>
-import { validateCurrentForm, httpGetUrlOptions, httpHeaderOptions } from '@/modules/utils'
+import { validateCurrentForm } from '@mp-se/espframework-ui-components'
+import { httpGetUrlOptions, httpHeaderOptions } from '@/modules/utils'
 import { global, config } from '@/modules/pinia'
 
 const httpUrlCallback = (opt) => {

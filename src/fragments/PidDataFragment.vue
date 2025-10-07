@@ -22,7 +22,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { global } from '@/modules/pinia'
-import { logError, logDebug } from '@mp-se/espframework-ui-components'
+import { logError, logDebug, sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 
 const data = ref('')
 const source = defineModel('source')
@@ -49,21 +49,19 @@ onMounted(() => {
   load()
 })
 
-const load = () => {
+const load = async () => {
   logDebug('DevicePidsView:load()')
   global.clearMessages()
   global.disabled = true
-  fetch(global.baseURL + 'api/pid/' + source.value, { headers: { Authorization: global.token } })
-    .then((res) => res.json())
-    .then((json) => {
-      logDebug('DevicePidsView:load()', json)
-      data.value = json
-      global.disabled = false
-    })
-    .catch((err) => {
-      logError('DevicePidsView:load()', err)
-      global.messageError = 'Failed to do load data from /api/' + source.value
-      global.disabled = false
-    })
+  try {
+    const json = await http.getJson('api/pid/' + source.value)
+    logDebug('DevicePidsView:load()', json)
+    data.value = json
+    global.disabled = false
+  } catch (err) {
+    logError('DevicePidsView:load()', err)
+    global.messageError = 'Failed to do load data from /api/' + source.value
+    global.disabled = false
+  }
 }
 </script>
