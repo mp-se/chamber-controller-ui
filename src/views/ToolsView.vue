@@ -4,6 +4,15 @@
     <p class="h3">Tools</p>
     <hr />
 
+    <template v-if="global.ui.enableVoltageFragment">
+      <VoltageFragment></VoltageFragment>
+
+      <div class="row gy-4">
+        <p></p>
+        <hr />
+      </div>
+    </template>
+
     <ListFilesFragment></ListFilesFragment>
 
     <div class="row gy-4">
@@ -44,9 +53,6 @@
 <script setup>
 import { ref } from 'vue'
 import { global } from '@/modules/pinia'
-import ListFilesFragment from '@/fragments/ListFilesFragment.vue'
-import AdvancedFilesFragment from '@/fragments/AdvancedFilesFragment.vue'
-import EnableCorsFragment from '@/fragments/EnableCorsFragment.vue'
 
 const hideAdvanced = ref(true)
 

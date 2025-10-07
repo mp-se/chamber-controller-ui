@@ -10,6 +10,15 @@ export const useGlobalStore = defineStore('global', {
       disabled: false,
       configChanged: false,
 
+      ui: {
+        enableVoltageFragment: false,
+        enableManualWifiEntry: false,
+        enableScanForStrongestAp: false, 
+      },
+
+      feature: {
+      },
+
       messageError: '',
       messageWarning: '',
       messageSuccess: '',
