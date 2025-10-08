@@ -9,10 +9,15 @@
         <div style="col-md-12">
           <p>
             Selet the firmware file that matches your device. Platform:
-            <span class="badge bg-secondary">{{ global.platform }}</span>
-            , Version:
-            <span class="badge bg-secondary">{{ global.app_ver }}</span> ({{ global.app_build }}) ,
-            Hardware: <span class="badge bg-secondary">{{ global.hardware }}</span> , Filename:
+            <span class="badge bg-secondary">{{ global.platform }}</span
+            >, Version: <span class="badge bg-secondary">{{ global.app_ver }}</span> ({{
+              global.app_build
+            }}),
+            <template v-if="global.hardware !== undefined"
+              >Hardware: <span class="badge bg-secondary">{{ global.hardware }}</span
+              >,</template
+            >
+            Filename:
             <span class="badge bg-secondary">{{ global.firmware_file }}</span>
           </p>
         </div>

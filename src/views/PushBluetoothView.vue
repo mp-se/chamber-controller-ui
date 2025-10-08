@@ -4,7 +4,7 @@
     <p class="h3">Push - Bluetooth</p>
     <hr />
 
-    <template v-if="status.platform !== 'esp32s2'">
+    <template v-if="global.feature.ble">
       <form @submit.prevent="save" class="needs-validation" novalidate>
         <div class="row">
           <div class="col-md-12">
@@ -53,7 +53,7 @@
 
 <script setup>
 import { validateCurrentForm } from '@mp-se/espframework-ui-components'
-import { global, config, status } from '@/modules/pinia'
+import { global, config } from '@/modules/pinia'
 
 const save = async () => {
   if (!validateCurrentForm()) return

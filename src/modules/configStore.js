@@ -165,7 +165,7 @@ export const useConfigStore = defineStore('config', {
         return { success: false, data: null }
       }
     },
-    
+
     async saveAll() {
       global.clearMessages()
       global.disabled = true
@@ -215,7 +215,7 @@ export const useConfigStore = defineStore('config', {
       } finally {
         global.disabled = false
       }
-  },
+    },
     async runSensorScan() {
       global.disabled = true
       logInfo('configStore.runSensorScan()', 'Starting sensor scan')
@@ -243,6 +243,6 @@ export const useConfigStore = defineStore('config', {
       } finally {
         global.disabled = false
       }
-    },
+    }
   }
 })

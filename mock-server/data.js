@@ -64,10 +64,7 @@ export var configData = {
 export var statusData = {
   id: "7376ef",
   rssi: -56,
-  app_ver: "0.3.0",
-  app_build: "gitrev",
   mdns: "fridge",
-  platform: "esp32",
   wifi_ssid: "wifi",
   total_heap: 1000,
   free_heap: 500,
@@ -100,5 +97,16 @@ export var ccData = { cc: "empty" }
 export var csData = { cs: "empty" }
 export var cvData = { cv: "empty" }
 export var mtData = { mt: "empty" }
+
+export var featureData = {
+  board: 'esp32_pro',
+  platform: 'esp32c3',
+  app_ver: '2.0.0',
+  app_build: 'gitrev',
+  firmware_file: 'firmware.bin',
+
+  // Feature flags
+  ble: true,
+}
 
 // EOF

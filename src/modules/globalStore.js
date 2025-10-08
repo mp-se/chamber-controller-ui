@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { logInfo, logDebug, logError } from '@mp-se/espframework-ui-components'
+import { sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 
 export const useGlobalStore = defineStore('global', {
   state: () => {
@@ -13,10 +15,11 @@ export const useGlobalStore = defineStore('global', {
       ui: {
         enableVoltageFragment: false,
         enableManualWifiEntry: false,
-        enableScanForStrongestAp: false, 
+        enableScanForStrongestAp: false
       },
 
       feature: {
+        ble: true
       },
 
       messageError: '',
@@ -51,6 +54,27 @@ export const useGlobalStore = defineStore('global', {
       this.messageWarning = ''
       this.messageSuccess = ''
       this.messageInfo = ''
+    },
+    async load() {
+      try {
+        logInfo('globalStore.load()', 'Fetching /api/feature')
+        const json = await http.getJson('api/feature')
+        logDebug('globalStore.load()', json)
+
+        this.board = json.board.toUpperCase()
+        this.app_ver = json.app_ver
+        this.app_build = json.app_build
+        this.platform = json.platform.toUpperCase()
+        this.firmware_file = json.firmware_file.toLowerCase()
+
+        this.feature.ble = json.ble
+
+        logInfo('globalStore.load()', 'Fetching /api/feature completed')
+        return true
+      } catch (err) {
+        logError('globalStore.load()', err)
+        return false
+      }
     }
   }
 })

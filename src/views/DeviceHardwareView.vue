@@ -139,10 +139,16 @@ onMounted(async () => {
     }
 
     if (!beer && config.beer_sensor_id)
-      sensorOptions.value.push({ label: config.beer_sensor_id + ' (not detected)', value: config.beer_sensor_id })
+      sensorOptions.value.push({
+        label: config.beer_sensor_id + ' (not detected)',
+        value: config.beer_sensor_id
+      })
 
     if (!fridge && config.fridge_sensor_id)
-      sensorOptions.value.push({ label: config.fridge_sensor_id + ' (not detected)', value: config.fridge_sensor_id })
+      sensorOptions.value.push({
+        label: config.fridge_sensor_id + ' (not detected)',
+        value: config.fridge_sensor_id
+      })
   }
 
   global.disabled = false

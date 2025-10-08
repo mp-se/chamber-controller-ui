@@ -7,10 +7,7 @@ export const useStatusStore = defineStore('status', {
     return {
       id: '',
       rssi: 0,
-      app_ver: '',
-      app_build: '',
       mdns: '',
-      platform: '',
       wifi_ssid: '',
       ip: '',
       total_heap: 0,
@@ -51,10 +48,7 @@ export const useStatusStore = defineStore('status', {
         logDebug('statusStore:load()', json)
         this.id = json.id
         this.rssi = json.rssi
-        this.app_ver = json.app_ver
-        this.app_build = json.app_build
         this.mdns = json.mdns
-        this.platform = json.platform
         this.wifi_ssid = json.wifi_ssid
         this.ip = json.ip
         this.total_heap = Math.round(json.total_heap / 1024).toFixed(0)

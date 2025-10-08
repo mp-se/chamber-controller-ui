@@ -41,7 +41,7 @@
         <div class="col-md-4">
           <BsCard header="Device" color="info" title="Software version">
             <p class="text-center">
-              Firmware: {{ status.app_ver }} ({{ status.app_build }}) UI: {{ global.uiVersion }} ({{
+              Firmware: {{ global.app_ver }} ({{ global.app_build }}) UI: {{ global.uiVersion }} ({{
                 global.uiBuild
               }})
             </p>
@@ -51,7 +51,7 @@
         <div class="col-md-4">
           <BsCard header="Device" color="info" title="Platform">
             <p class="text-center">
-              <span class="badge bg-secondary">{{ status.platform }}</span>
+              <span class="badge bg-secondary">{{ global.platform }}</span>
             </p>
           </BsCard>
         </div>

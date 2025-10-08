@@ -141,14 +141,21 @@ async function initializeApp() {
       return
     }
 
-    // Step 2: Load device status
+    // Step 2: Load feature flags
+    const globalSuccess = await global.load()
+    if (!globalSuccess) {
+      global.messageError = 'Failed to load feature flags from device, please try to reload page!'
+      return
+    }
+
+    // Step 3: Load device status
     const statusSuccess = await status.load()
     if (!statusSuccess) {
       global.messageError = 'Failed to load status from device, please try to reload page!'
       return
     }
 
-    // Step 3: Load configuration
+    // Step 4: Load configuration
     const configSuccess = await config.load()
     if (!configSuccess) {
       global.messageError =
