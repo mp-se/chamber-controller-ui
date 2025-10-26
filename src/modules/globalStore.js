@@ -7,6 +7,10 @@ export const useGlobalStore = defineStore('global', {
     return {
       id: '',
       platform: '',
+      board: '',
+      app_ver: '',
+      app_build: '',
+      firmware_file: '',
 
       initialized: false,
       disabled: false,
