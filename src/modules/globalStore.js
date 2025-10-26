@@ -46,11 +46,13 @@ export const useGlobalStore = defineStore('global', {
       return this.messageInfo != '' ? true : false
     },
     uiVersion() {
-      return import.meta.env.PACKAGE_VERSION || '0.0.0'
+      logDebug('globalStore.uiVersion()', import.meta.env.VITE_APP_VERSION)
+      return import.meta.env.VITE_APP_VERSION
     },
     uiBuild() {
-      return import.meta.env.VITE_BUILD_TIME || 'dev'
-    }
+      logDebug('globalStore.uiBuild()', import.meta.env.VITE_APP_BUILD)
+      return import.meta.env.VITE_APP_BUILD
+    },
   },
   actions: {
     clearMessages() {
