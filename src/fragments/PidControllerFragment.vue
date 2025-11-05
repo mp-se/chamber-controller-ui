@@ -46,7 +46,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { validateCurrentForm } from '@mp-se/espframework-ui-components'
+import { validateCurrentForm, sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 import { global, config, status } from '@/modules/pinia'
 import { logDebug, logError, logInfo } from '@mp-se/espframework-ui-components'
 import { storeToRefs } from 'pinia'
@@ -94,16 +94,7 @@ const saveSettings = async () => {
     logDebug('PidControllerFragment.saveSettings()', data)
     logInfo('PidControllerFragment.saveSettings()', 'Sending /api/mode')
 
-    const response = await fetch(global.baseURL + 'api/mode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: global.token },
-      body: JSON.stringify(data),
-      signal: AbortSignal.timeout(global.fetchTimeout)
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-    }
+    await http.postJson('api/mode', data)
 
     logInfo('PidControllerFragment.saveSettings()', 'Sending /api/mode completed')
     global.messageSuccess = 'PID controller settings updated successfully'
