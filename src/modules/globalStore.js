@@ -23,7 +23,8 @@ export const useGlobalStore = defineStore('global', {
       },
 
       feature: {
-        ble: true
+        ble: true,
+        ble_sensor: true
       },
 
       messageError: '',
@@ -52,7 +53,7 @@ export const useGlobalStore = defineStore('global', {
     uiBuild() {
       logDebug('globalStore.uiBuild()', import.meta.env.VITE_APP_BUILD)
       return import.meta.env.VITE_APP_BUILD
-    },
+    }
   },
   actions: {
     clearMessages() {
@@ -74,6 +75,7 @@ export const useGlobalStore = defineStore('global', {
         this.firmware_file = json.firmware_file.toLowerCase()
 
         this.feature.ble = json.ble
+        this.feature.ble_sensor = json.ble_sensor
 
         logInfo('globalStore.load()', 'Fetching /api/feature completed')
         return true

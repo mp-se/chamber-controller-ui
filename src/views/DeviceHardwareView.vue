@@ -58,7 +58,7 @@
           <hr />
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <BsInputSwitch
             v-model="config.enable_cooling"
             label="Enable Cooling"
@@ -68,7 +68,7 @@
           ></BsInputSwitch>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <BsInputSwitch
             v-model="config.enable_heating"
             label="Enable Heating"
@@ -78,7 +78,7 @@
           ></BsInputSwitch>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <BsInputSwitch
             v-model="config.invert_pins"
             label="Invert pins"
@@ -87,6 +87,42 @@
             :disabled="global.disabled"
           ></BsInputSwitch>
         </div>
+
+        <template v-if="global.feature.ble_sensor">
+          <div class="col-md-12">
+            <hr />
+          </div>
+
+          <div class="col-md-3" v-if="global.feature.ble_sensor">
+            <BsInputSwitch
+              v-model="config.ble_enabled_scan"
+              label="Enable BLE sensors"
+              help="Enable BLE scanning for temperature sensors"
+              width=""
+              :disabled="global.disabled"
+            ></BsInputSwitch>
+          </div>
+
+          <div class="col-md-3">
+            <BsSelect
+              v-model="config.ble_sensor_valid_time"
+              label="BLE sensor valid time"
+              help="Select the valid time for the BLE sensor"
+              :options="bleValidOptions"
+              :disabled="global.disabled || !config.ble_enabled_scan"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <BsSelect
+              v-model="config.beer_ble_sensor_id"
+              label="Beer BLE Sensor"
+              help="Select the beer BLE sensor, if you dont see your sensor, wait for it to be detected"
+              :options="bleSensorOptions"
+              :disabled="global.disabled || !config.ble_enabled_scan"
+            />
+          </div>
+        </template>
       </div>
 
       <div class="row gy-2">
@@ -116,13 +152,24 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { validateCurrentForm } from '@mp-se/espframework-ui-components'
-import { global, config } from '@/modules/pinia'
+import { global, config, status } from '@/modules/pinia'
 import { logDebug } from '@mp-se/espframework-ui-components'
 
 const sensorOptions = ref([{ label: '- not selected -', value: '' }])
+const bleSensorOptions = ref([{ label: '- not selected -', value: '' }])
+const bleValidOptions = ref([
+  { label: '5 minutes', value: 5 },
+  { label: '10 minutes', value: 10 },
+  { label: '15 minutes', value: 15 },
+  { label: '20 minutes', value: 20 },
+  { label: '25 minutes', value: 25 },
+  { label: '30 minutes', value: 30 }
+])
 
 onMounted(async () => {
   global.disabled = true
+
+  // Populate the DS18B20 sensors
   const res = await config.runSensorScan()
   if (res && res.success && res.data) {
     const data = res.data
@@ -138,18 +185,34 @@ onMounted(async () => {
       sensorOptions.value.push({ label: s, value: s })
     }
 
-    if (!beer && config.beer_sensor_id)
+    if (!beer && config.beer_sensor_id.length > 0)
       sensorOptions.value.push({
         label: config.beer_sensor_id + ' (not detected)',
         value: config.beer_sensor_id
       })
 
-    if (!fridge && config.fridge_sensor_id)
+    if (!fridge && config.fridge_sensor_id.length > 0)
       sensorOptions.value.push({
         label: config.fridge_sensor_id + ' (not detected)',
         value: config.fridge_sensor_id
       })
   }
+
+  // Populate the BLE sensors
+  let ble = false
+  await status.load()
+  logDebug('DeviceHardwareView::onMounted() BLE sensor', status.temperature_device)
+
+  for (const t of status.temperature_device) {
+    bleSensorOptions.value.push({ label: t.device + ' (' + t.type + ')', value: t.device })
+    if (t.device == config.beer_ble_sensor_id) ble = true
+  }
+
+  if (!ble && config.beer_ble_sensor_id.length > 0)
+    bleSensorOptions.value.push({
+      label: config.beer_ble_sensor_id + ' (not detected)',
+      value: config.beer_ble_sensor_id
+    })
 
   global.disabled = false
 })

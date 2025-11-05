@@ -16,6 +16,26 @@
           <PidControllerFragment />
         </div>
 
+        <template v-if="global.feature.ble_sensor">
+          <template v-for="t in status.temperature_device" :key="t.device">
+            <div class="col-md-4">
+              <BsCard
+                header="BLE Temperature Device"
+                color="secondary"
+                :title="t.device + ' (' + formatTime(t.update_time) + ')'"
+              >
+                <p class="text-center">
+                  Temperature: {{ formatTemp(t.temp) }}°{{ config.temp_format }}
+                </p>
+
+                <span class="badge bg-primary">{{ t.source }}</span
+                >&nbsp;
+                <span class="badge bg-primary">{{ t.type }}</span>
+              </BsCard>
+            </div>
+          </template>
+        </template>
+
         <div class="col-md-4">
           <BsCard header="Measurement" color="info" title="Wifi">
             <p class="text-center">{{ status.rssi }} dBm - {{ status.wifi_ssid }}</p>
@@ -77,12 +97,32 @@
 
 <script setup>
 import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
-import { status, global } from '@/modules/pinia'
+import { status, config, global } from '@/modules/pinia'
 import PidControllerFragment from '@/fragments/PidControllerFragment.vue'
 import PidTemperatureFragment from '@/fragments/PidTemperatureFragment.vue'
 
 const polling = ref(null)
 const timer = ref(null)
+
+function formatTime(t) {
+  if (t < 60)
+    // less than 1 min
+    return new Number(t).toFixed(0) + 's'
+
+  if (t < 60 * 60)
+    // less than 1 hour
+    return new Number(t / 60).toFixed(0) + 'm'
+
+  if (t < 60 * 60 * 24)
+    // less than 1 day
+    return new Number(t / (60 * 60)).toFixed(0) + 'h'
+
+  return new Number(t / (60 * 60 * 24)).toFixed(0) + 'd'
+}
+
+function formatTemp(t) {
+  return config.temp_format === 'C' ? new Number(t).toFixed(2) : new Number(t).toFixed(1)
+}
 
 function updateTimers() {
   // This is used to decrease timers so we can display every seconds even though status is polled every 5 seconds

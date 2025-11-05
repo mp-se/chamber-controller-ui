@@ -41,6 +41,7 @@ export const useConfigStore = defineStore('config', {
     dark_mode: false,
     fridge_sensor_id: '',
     beer_sensor_id: '',
+    beer_ble_sensor_id: '',
     fridge_sensor_offset: 0,
     beer_sensor_offset: 0,
     controller_mode: 'o',
@@ -48,7 +49,10 @@ export const useConfigStore = defineStore('config', {
     enable_cooling: false,
     enable_heating: false,
     invert_pins: false,
-    ble_enabled: false
+    // ble_enabled: false
+    ble_enabled_push: true,
+    ble_enabled_scan: true,
+    ble_sensor_valid_time: 0
     // Add any additional config fields from pressuremon-ui if needed
   }),
   actions: {
@@ -58,7 +62,50 @@ export const useConfigStore = defineStore('config', {
         logInfo('configStore.load()', 'Fetching /api/config')
         const json = await http.getJson('api/config')
         logDebug('configStore.load()', json)
-        Object.assign(this, json)
+
+        this.id = json.id
+        this.mdns = json.mdns
+        this.temp_format = json.temp_format
+        this.ota_url = json.ota_url
+        this.restart_interval = json.restart_interval
+        this.wifi_portal_timeout = json.wifi_portal_timeout
+        this.wifi_connect_timeout = json.wifi_connect_timeout
+        this.wifi_ssid = json.wifi_ssid
+        this.wifi_ssid2 = json.wifi_ssid2
+        this.wifi_pass = json.wifi_pass
+        this.wifi_pass2 = json.wifi_pass2
+        this.push_timeout = json.push_timeout
+        this.http_post_target = json.http_post_target
+        this.http_post_header1 = json.http_post_header1
+        this.http_post_header2 = json.http_post_header2
+        this.http_post2_target = json.http_post2_target
+        this.http_post2_header1 = json.http_post2_header1
+        this.http_post2_header2 = json.http_post2_header2
+        this.http_get_target = json.http_get_target
+        this.http_get_header1 = json.http_get_header1
+        this.http_get_header2 = json.http_get_header2
+        this.influxdb2_target = json.influxdb2_target
+        this.influxdb2_bucket = json.influxdb2_bucket
+        this.influxdb2_org = json.influxdb2_org
+        this.influxdb2_token = json.influxdb2_token
+        this.mqtt_target = json.mqtt_target
+        this.mqtt_port = json.mqtt_port
+        this.mqtt_user = json.mqtt_user
+        this.mqtt_pass = json.mqtt_pass
+        this.dark_mode = json.dark_mode
+        this.fridge_sensor_id = json.fridge_sensor_id
+        this.beer_sensor_id = json.beer_sensor_id
+        this.beer_ble_sensor_id = json.beer_ble_sensor_id
+        this.fridge_sensor_offset = json.fridge_sensor_offset
+        this.beer_sensor_offset = json.beer_sensor_offset
+        this.controller_mode = json.controller_mode
+        this.target_temperature = json.target_temperature
+        this.enable_cooling = json.enable_cooling
+        this.enable_heating = json.enable_heating
+        this.invert_pins = json.invert_pins
+        this.ble_enabled_push = json.ble_enabled_push
+        this.ble_enabled_scan = json.ble_enabled_scan
+        this.ble_sensor_valid_time = json.ble_sensor_valid_time
         logInfo('configStore.load()', 'Fetching /api/config completed')
         return true
       } catch (err) {

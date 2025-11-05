@@ -36,6 +36,8 @@ export const useStatusStore = defineStore('status', {
       pid_time_since_heating: 0,
       pid_time_since_idle: 0,
 
+      temperature_device: [],
+
       connected: true
     }
   },
@@ -74,6 +76,8 @@ export const useStatusStore = defineStore('status', {
         this.pid_time_since_cooling = json.pid_time_since_cooling
         this.pid_time_since_heating = json.pid_time_since_heating
         this.pid_time_since_idle = json.pid_time_since_idle
+        this.temperature_device = json.temperature_device
+
         logInfo('statusStore:load()', 'Fetching /api/status completed')
         return true
       } catch (err) {

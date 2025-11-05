@@ -114,19 +114,19 @@ const items = ref([
     badge: badge.deviceBadge,
     subs: [
       {
-        label: 'Hardware',
+        label: 'Settings',
+        badge: badge.deviceSettingBadge,
+        path: '/device/settings'
+      },
+      {
+        label: 'Controller Hardware',
         badge: badge.deviceHardwareBadge,
         path: '/device/hardware'
       },
       {
-        label: 'PID Controller',
+        label: 'PID Controller Info',
         badge: badge.devicePidBadge,
         path: '/device/pid'
-      },
-      {
-        label: 'Settings',
-        badge: badge.deviceSettingBadge,
-        path: '/device/settings'
       },
       {
         label: 'Wifi',
