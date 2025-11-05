@@ -59,9 +59,8 @@ export var configData = {
   target_temperature: 10.4,
   enable_cooling: true,
   enable_heating: true,
-  // ble_enabled: false
-  ble_enabled_push: true,
-  ble_enabled_scan: true,
+  ble_push_enabled: true,
+  ble_scan_enabled: true,
   ble_sensor_valid_time: 15
 }
 

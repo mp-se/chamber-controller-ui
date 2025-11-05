@@ -95,7 +95,7 @@
 
           <div class="col-md-3" v-if="global.feature.ble_sensor">
             <BsInputSwitch
-              v-model="config.ble_enabled_scan"
+              v-model="config.ble_scan_enabled"
               label="Enable BLE sensors"
               help="Enable BLE scanning for temperature sensors"
               width=""
@@ -109,7 +109,7 @@
               label="BLE sensor valid time"
               help="Select the valid time for the BLE sensor"
               :options="bleValidOptions"
-              :disabled="global.disabled || !config.ble_enabled_scan"
+              :disabled="global.disabled || !config.ble_scan_enabled"
             />
           </div>
 
@@ -119,7 +119,7 @@
               label="Beer BLE Sensor"
               help="Select the beer BLE sensor, if you dont see your sensor, wait for it to be detected"
               :options="bleSensorOptions"
-              :disabled="global.disabled || !config.ble_enabled_scan"
+              :disabled="global.disabled || !config.ble_scan_enabled"
             />
           </div>
         </template>

@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-md-12">
             <BsInputSwitch
-              v-model="config.ble_enabled_push"
+              v-model="config.ble_push_enabled"
               label="Enable temperature sending over bluetooth"
               :disabled="global.disabled"
             />

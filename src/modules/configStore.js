@@ -49,9 +49,8 @@ export const useConfigStore = defineStore('config', {
     enable_cooling: false,
     enable_heating: false,
     invert_pins: false,
-    // ble_enabled: false
-    ble_enabled_push: true,
-    ble_enabled_scan: true,
+    ble_push_enabled: true,
+    ble_scan_enabled: true,
     ble_sensor_valid_time: 0
     // Add any additional config fields from pressuremon-ui if needed
   }),
@@ -103,8 +102,8 @@ export const useConfigStore = defineStore('config', {
         this.enable_cooling = json.enable_cooling
         this.enable_heating = json.enable_heating
         this.invert_pins = json.invert_pins
-        this.ble_enabled_push = json.ble_enabled_push
-        this.ble_enabled_scan = json.ble_enabled_scan
+        this.ble_push_enabled = json.ble_push_enabled
+        this.ble_scan_enabled = json.ble_scan_enabled
         this.ble_sensor_valid_time = json.ble_sensor_valid_time
         logInfo('configStore.load()', 'Fetching /api/config completed')
         return true
