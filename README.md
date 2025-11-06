@@ -60,6 +60,6 @@ npm run serve
 
 Add a new tag
 ```
-git tag -a [tag_name] HEAD -m "Tag message"
-git push origin tag [tag_name]
+git tag -a "0.6.0" HEAD -m "0.6.0"
+git push origin tag "0.6.0"
 ```
