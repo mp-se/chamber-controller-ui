@@ -93,7 +93,7 @@
           >&nbsp;
 
           <button
-            @click="config.restart()"
+            @click="restartDevice"
             type="button"
             class="btn btn-secondary"
             :disabled="global.disabled"
@@ -212,6 +212,15 @@ const saveSettings = async () => {
   } catch (error) {
     logError('DeviceSettingsView.saveSettings()', error)
     global.messageError = 'Failed to save settings: ' + (error.message || error)
+  }
+}
+
+const restartDevice = async () => {
+  try {
+    await config.restart()
+  } catch (error) {
+    logError('DeviceSettingsView.restartDevice()', error)
+    global.messageError = 'Failed to restart device: ' + (error.message || error)
   }
 }
 </script>

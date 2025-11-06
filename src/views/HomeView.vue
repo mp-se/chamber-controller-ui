@@ -37,6 +37,31 @@
         </template>
 
         <div class="col-md-4">
+          <BsCard header="PID" color="success" title="Controller">
+            <p class="text-center">
+            Mode: {{ status.pid_mode == 'b' ? 'Beer Constant' : (status.pid_mode == 'f' ? 'Fridge Constant' : 'Off') }}<br>
+            State: {{ status.pid_state_string }}<br>
+            </p>
+          </BsCard>
+        </div>
+
+        <div class="col-md-4">
+          <BsCard header="PID" color="success" title="Actuators">
+            <p class="text-center">
+            Cooling: {{ status.pid_cooling_actuator_active ? 'Active' : 'Inactive'}}<br>
+            Heating: {{ status.pid_heating_actuator_active ? 'Active' : 'Inactive'}}</p>
+          </BsCard>
+        </div>
+
+        <div class="col-md-4">
+          <BsCard header="PID" color="success" title="Sensors">
+            <p class="text-center">
+            Chamber: {{ formatTemp(status.pid_fridge_temp) }}°{{ config.temp_format }}<br>
+            Beer: {{ formatTemp(status.pid_beer_temp) }}°{{ config.temp_format }}</p>
+          </BsCard>
+        </div>
+
+        <div class="col-md-4">
           <BsCard header="Measurement" color="info" title="Wifi">
             <p class="text-center">{{ status.rssi }} dBm - {{ status.wifi_ssid }}</p>
           </BsCard>
@@ -98,6 +123,7 @@
 <script setup>
 import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
 import { status, config, global } from '@/modules/pinia'
+import { tempToF } from '@mp-se/espframework-ui-components'
 import PidControllerFragment from '@/fragments/PidControllerFragment.vue'
 import PidTemperatureFragment from '@/fragments/PidTemperatureFragment.vue'
 
@@ -121,7 +147,7 @@ function formatTime(t) {
 }
 
 function formatTemp(t) {
-  return config.temp_format === 'C' ? new Number(t).toFixed(2) : new Number(t).toFixed(1)
+  return config.temp_format === 'C' ? new Number(t).toFixed(2) :  tempToF(new Number(t).toFixed(1))
 }
 
 function updateTimers() {
@@ -132,12 +158,11 @@ function updateTimers() {
   status.pid_time_since_heating += 1
 }
 
-function refresh() {
-  status.load((success) => {
-    if (success) {
-      // TODO: Add any logic you want update as part of status update
-    }
-  })
+async function refresh() {
+  const success = await status.load()
+  if (success) {
+    // TODO: Add any logic you want update as part of status update
+  }
 }
 
 onBeforeMount(() => {
