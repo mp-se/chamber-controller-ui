@@ -39,8 +39,15 @@
         <div class="col-md-4">
           <BsCard header="PID" color="success" title="Controller">
             <p class="text-center">
-            Mode: {{ status.pid_mode == 'b' ? 'Beer Constant' : (status.pid_mode == 'f' ? 'Fridge Constant' : 'Off') }}<br>
-            State: {{ status.pid_state_string }}<br>
+              Mode:
+              {{
+                status.pid_mode == 'b'
+                  ? 'Beer Constant'
+                  : status.pid_mode == 'f'
+                    ? 'Fridge Constant'
+                    : 'Off'
+              }}<br />
+              State: {{ status.pid_state_string }}<br />
             </p>
           </BsCard>
         </div>
@@ -48,16 +55,18 @@
         <div class="col-md-4">
           <BsCard header="PID" color="success" title="Actuators">
             <p class="text-center">
-            Cooling: {{ status.pid_cooling_actuator_active ? 'Active' : 'Inactive'}}<br>
-            Heating: {{ status.pid_heating_actuator_active ? 'Active' : 'Inactive'}}</p>
+              Cooling: {{ status.pid_cooling_actuator_active ? 'Active' : 'Inactive' }}<br />
+              Heating: {{ status.pid_heating_actuator_active ? 'Active' : 'Inactive' }}
+            </p>
           </BsCard>
         </div>
 
         <div class="col-md-4">
           <BsCard header="PID" color="success" title="Sensors">
             <p class="text-center">
-            Chamber: {{ formatTemp(status.pid_fridge_temp) }}°{{ config.temp_format }}<br>
-            Beer: {{ formatTemp(status.pid_beer_temp) }}°{{ config.temp_format }}</p>
+              Chamber: {{ formatTemp(status.pid_fridge_temp) }}°{{ config.temp_format }}<br />
+              Beer: {{ formatTemp(status.pid_beer_temp) }}°{{ config.temp_format }}
+            </p>
           </BsCard>
         </div>
 
@@ -147,7 +156,7 @@ function formatTime(t) {
 }
 
 function formatTemp(t) {
-  return config.temp_format === 'C' ? new Number(t).toFixed(2) :  tempToF(new Number(t).toFixed(1))
+  return config.temp_format === 'C' ? new Number(t).toFixed(2) : tempToF(new Number(t).toFixed(1))
 }
 
 function updateTimers() {
