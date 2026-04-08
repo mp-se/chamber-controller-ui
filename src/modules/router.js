@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ * Copyright (C) 2024-2026 Magnus
+ */
+
 import { ref } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { validateCurrentForm } from '@mp-se/espframework-ui-components'

@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ * Copyright (C) 2024-2026 Magnus
+ */
+
 import { ref } from 'vue'
 import { createPinia } from 'pinia'
 import { useGlobalStore } from '@/modules/globalStore'

@@ -1,3 +1,8 @@
+<!--
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright (C) 2024-2026 Magnus
+-->
+
 <template>
   <dialog id="spinner" class="loading">
     <div class="container text-center">

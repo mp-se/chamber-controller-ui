@@ -1,3 +1,8 @@
+<!--
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright (C) 2024-2026 Magnus
+-->
+
 <template>
   <h5>Explore the file system</h5>
   <div class="row gy-4">

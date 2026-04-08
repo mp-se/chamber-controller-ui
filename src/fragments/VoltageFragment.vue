@@ -1,3 +1,8 @@
+<!--
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright (C) 2024-2026 Magnus
+-->
+
 <template>
   <h5>Calculate a new voltage factor</h5>
   <div class="row">

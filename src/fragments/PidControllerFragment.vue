@@ -1,3 +1,8 @@
+<!--
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright (C) 2024-2026 Magnus
+-->
+
 <template>
   <div class="card h-100">
     <div class="card-header bg-success-subtle">Controller</div>
