@@ -18,13 +18,54 @@
  */
 
 import { defineStore } from 'pinia'
-import { global, saveConfigState, getConfigChanges } from '@/modules/pinia'
 import {
   logDebug,
   logError,
   logInfo,
   sharedHttpClient as http
 } from '@mp-se/espframework-ui-components'
+
+// Lazy import to avoid circular dependency
+let globalStore = null
+let configChanges = {}
+
+const getGlobalStore = async () => {
+  if (!globalStore) {
+    const { useGlobalStore } = await import('@/modules/globalStore')
+    globalStore = useGlobalStore()
+  }
+  return globalStore
+}
+
+const saveConfigState = async (config) => {
+  logDebug('configStore:saveConfigState()', 'Saving state')
+  configChanges = {}
+  for (const key in config) {
+    if (typeof config[key] !== 'function' && key !== '$id') {
+      configChanges[key] = config[key]
+    }
+  }
+  logDebug('configStore:saveConfigState()', 'Saved state: ', configChanges)
+  const global = await getGlobalStore()
+  global.configChanged = false
+}
+
+const getConfigChanges = (config) => {
+  const changes = {}
+
+  if (Object.keys(configChanges).length === 0) {
+    logDebug('configStore:getConfigChanges()', 'configState not saved')
+    return changes
+  }
+
+  for (const key in configChanges) {
+    if (configChanges[key] != config[key]) {
+      changes[key] = config[key]
+    }
+  }
+
+  return changes
+}
 
 export const useConfigStore = defineStore('config', {
   state: () => ({
@@ -75,6 +116,7 @@ export const useConfigStore = defineStore('config', {
   }),
   actions: {
     async load() {
+      const global = await getGlobalStore()
       global.disabled = true
       try {
         logInfo('configStore.load()', 'Fetching /api/config')
@@ -134,16 +176,16 @@ export const useConfigStore = defineStore('config', {
       }
     },
     async sendConfig() {
+      const global = await getGlobalStore()
       global.disabled = true
       logInfo('configStore.sendConfig()', 'Sending /api/config')
 
-      const data = getConfigChanges()
+      const data = getConfigChanges(this)
       logDebug('configStore.sendConfig()', data)
 
       if (JSON.stringify(data).length == 2) {
         logInfo('configStore.sendConfig()', 'No config data to store, skipping step')
         global.disabled = false
-        this.convertTemp()
         return true
       }
 
@@ -159,6 +201,7 @@ export const useConfigStore = defineStore('config', {
       }
     },
     async restart() {
+      const global = await getGlobalStore()
       global.clearMessages()
       global.disabled = true
       try {
@@ -183,6 +226,7 @@ export const useConfigStore = defineStore('config', {
       }
     },
     async sendWifiScan() {
+      const global = await getGlobalStore()
       global.disabled = true
       logInfo('configStore.sendWifiScan()', 'Sending /api/wifi')
       try {
@@ -195,6 +239,7 @@ export const useConfigStore = defineStore('config', {
       }
     },
     async sendSensorScan() {
+      const global = await getGlobalStore()
       global.disabled = true
       logInfo('configStore.sendSensorScan()', 'Sending /api/sensor')
       try {
@@ -232,6 +277,7 @@ export const useConfigStore = defineStore('config', {
     },
 
     async saveAll() {
+      const global = await getGlobalStore()
       global.clearMessages()
       global.disabled = true
 
@@ -243,7 +289,7 @@ export const useConfigStore = defineStore('config', {
         }
 
         global.messageSuccess = 'Configuration has been saved to device'
-        saveConfigState()
+        await saveConfigState(this)
       } catch (error) {
         logError('configStore.saveAll()', error)
         global.messageError = 'Failed to save configuration'
@@ -252,6 +298,7 @@ export const useConfigStore = defineStore('config', {
       }
     },
     async runWifiScan() {
+      const global = await getGlobalStore()
       global.disabled = true
       logInfo('configStore.runWifiScan()', 'Starting wifi scan')
 
@@ -282,6 +329,7 @@ export const useConfigStore = defineStore('config', {
       }
     },
     async runSensorScan() {
+      const global = await getGlobalStore()
       global.disabled = true
       logInfo('configStore.runSensorScan()', 'Starting sensor scan')
 

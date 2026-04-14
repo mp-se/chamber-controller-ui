@@ -93,8 +93,13 @@ export const useGlobalStore = defineStore('global', {
         this.platform = json.platform.toUpperCase()
         this.firmware_file = json.firmware_file.toLowerCase()
 
-        this.feature.ble = json.ble
-        this.feature.ble_sensor = json.ble_sensor
+        // Only update feature flags if they are present in the response
+        if (json.ble !== undefined) {
+          this.feature.ble = json.ble
+        }
+        if (json.ble_sensor !== undefined) {
+          this.feature.ble_sensor = json.ble_sensor
+        }
 
         logInfo('globalStore.load()', 'Fetching /api/feature completed')
         return true

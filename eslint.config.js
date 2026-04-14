@@ -22,6 +22,16 @@ export default [
     },
   },
 
+  {
+    name: 'app/test-files',
+    files: ['**/__tests__/**/*.js', '**/*.test.js', '**/*.spec.js'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+      },
+    },
+  },
+
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   skipFormatting,

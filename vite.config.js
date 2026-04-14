@@ -9,6 +9,20 @@ const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: ['src/tests/setup.js'],
+    deps: {
+      inline: ['@mp-se/espframework-ui-components']
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{js,vue}'],
+      exclude: ['node_modules/', 'src/**/*.test.js', 'src/tests/**']
+    }
+  },
   plugins: [
     vue({
       template: {

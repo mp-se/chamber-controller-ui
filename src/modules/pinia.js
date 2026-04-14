@@ -36,6 +36,8 @@ export { global, status, config }
 
 const configCompare = ref(null)
 
+// This function is now also defined in configStore.js
+// Keeping this here for the $subscribe mechanism
 const saveConfigState = () => {
   logDebug('pinia:saveConfigState()', 'Saving state')
 
@@ -50,6 +52,8 @@ const saveConfigState = () => {
   global.configChanged = false
 }
 
+// This function is now also defined in configStore.js
+// Keeping this here for the $subscribe mechanism
 const getConfigChanges = () => {
   var changes = {}
 
@@ -83,4 +87,5 @@ config.$subscribe(() => {
   }
 })
 
+// Export these for backward compatibility with code that might import from pinia.js
 export { saveConfigState, getConfigChanges }
