@@ -737,5 +737,210 @@ describe('DeviceHardwareView', () => {
       
       expect(wrapper.vm.sensorOptions.length).toBeGreaterThan(0)
     })
+
+    it('detects configured sensors in scan results', async () => {
+      config.beer_sensor_id = 'sensor1'
+      config.fridge_sensor_id = 'sensor2'
+      config.runSensorScan = vi.fn(async () => ({
+        success: true,
+        data: {
+          sensors: ['sensor1', 'sensor2', 'sensor3']
+        }
+      }))
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      // Should have initial entry + 3 sensors
+      expect(wrapper.vm.sensorOptions.length).toBe(4)
+      // Should NOT add not-detected labels for detected sensors
+      expect(wrapper.vm.sensorOptions.some(s => s.label.includes('not detected'))).toBe(false)
+    })
+
+    it('only adds not-detected label for beer sensor when missing', async () => {
+      config.beer_sensor_id = 'missing_beer'
+      config.fridge_sensor_id = 'sensor2'
+      config.runSensorScan = vi.fn(async () => ({
+        success: true,
+        data: {
+          sensors: ['sensor2', 'sensor3']
+        }
+      }))
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      const notDetectedLabels = wrapper.vm.sensorOptions.filter(s => s.label.includes('not detected'))
+      expect(notDetectedLabels.length).toBe(1)
+      expect(notDetectedLabels[0].label).toContain('missing_beer')
+    })
+
+    it('only adds not-detected label for fridge sensor when missing', async () => {
+      config.fridge_sensor_id = 'missing_fridge'
+      config.beer_sensor_id = 'sensor1'
+      config.runSensorScan = vi.fn(async () => ({
+        success: true,
+        data: {
+          sensors: ['sensor1', 'sensor3']
+        }
+      }))
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      const notDetectedLabels = wrapper.vm.sensorOptions.filter(s => s.label.includes('not detected'))
+      expect(notDetectedLabels.length).toBe(1)
+      expect(notDetectedLabels[0].label).toContain('missing_fridge')
+    })
+
+    it('adds not-detected labels for both missing configured sensors', async () => {
+      config.beer_sensor_id = 'missing_beer'
+      config.fridge_sensor_id = 'missing_fridge'
+      config.runSensorScan = vi.fn(async () => ({
+        success: true,
+        data: {
+          sensors: ['sensor1', 'sensor2']
+        }
+      }))
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      const notDetectedLabels = wrapper.vm.sensorOptions.filter(s => s.label.includes('not detected'))
+      expect(notDetectedLabels.length).toBe(2)
+    })
+
+    it('handles sensor scan with only one configured sensor detected', async () => {
+      config.beer_sensor_id = 'sensor1'
+      config.fridge_sensor_id = 'sensor2'
+      config.runSensorScan = vi.fn(async () => ({
+        success: true,
+        data: {
+          sensors: ['sensor1']
+        }
+      }))
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      const notDetectedLabels = wrapper.vm.sensorOptions.filter(s => s.label.includes('not detected'))
+      expect(notDetectedLabels.some(s => s.label.includes('sensor2'))).toBe(true)
+    })
+
+    it('handles BLE sensor not in status results', async () => {
+      config.beer_ble_sensor_id = 'missing_ble_sensor'
+      global.feature.ble_sensor = true
+      status.temperature_device = [
+        { device: 'device1', type: 'TH' },
+        { device: 'device2', type: 'TH' }
+      ]
+      status.load = vi.fn(async () => {
+        // Already set in beforeEach
+      })
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      const notDetectedBLE = wrapper.vm.bleSensorOptions.find(s => 
+        s.label.includes('not detected') && s.label.includes('missing_ble_sensor')
+      )
+      expect(notDetectedBLE).toBeDefined()
+    })
+
+    it('handles BLE sensor detected in status results', async () => {
+      config.beer_ble_sensor_id = 'device1'
+      global.feature.ble_sensor = true
+      status.temperature_device = [
+        { device: 'device1', type: 'TH' },
+        { device: 'device2', type: 'TH' }
+      ]
+      status.load = vi.fn(async () => {
+        // Already set above
+      })
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      const notDetectedBLE = wrapper.vm.bleSensorOptions.filter(s => s.label.includes('not detected'))
+      expect(notDetectedBLE.length).toBe(0)
+    })
+
+    it('clears BLE sensor options when no devices detected', async () => {
+      global.feature.ble_sensor = true
+      status.temperature_device = []
+      status.load = vi.fn(async () => {
+        status.temperature_device = []
+      })
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      // Should only have the "not selected" default option
+      expect(wrapper.vm.bleSensorOptions.length).toBe(1)
+      expect(wrapper.vm.bleSensorOptions[0].label).toBe('- not selected -')
+    })
+
+    it('populates BLE options with device and type information', async () => {
+      global.feature.ble_sensor = true
+      status.temperature_device = [
+        { device: 'sensor_A', type: 'TH' },
+        { device: 'sensor_B', type: 'PRESSURE' }
+      ]
+      status.load = vi.fn(async () => {
+        // Already set above
+      })
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      expect(wrapper.vm.bleSensorOptions).toContainEqual(expect.objectContaining({
+        label: 'sensor_A (TH)',
+        value: 'sensor_A'
+      }))
+      expect(wrapper.vm.bleSensorOptions).toContainEqual(expect.objectContaining({
+        label: 'sensor_B (PRESSURE)',
+        value: 'sensor_B'
+      }))
+    })
+
+    it('handles form submission when all sensors are configured', async () => {
+      config.beer_sensor_id = 'sensor1'
+      config.fridge_sensor_id = 'sensor2'
+      config.beer_ble_sensor_id = 'ble_sensor1'
+      config.saveAll = vi.fn(async () => {})
+
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      await wrapper.vm.saveSettings()
+      
+      expect(config.saveAll).toHaveBeenCalled()
+    })
+
+    it('validation fails on form submission', async () => {
+      const { validateCurrentForm } = await import('@mp-se/espframework-ui-components')
+      vi.mocked(validateCurrentForm).mockReturnValueOnce(false)
+      
+      config.saveAll = vi.fn()
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 50))
+      
+      await wrapper.vm.saveSettings()
+      
+      expect(config.saveAll).not.toHaveBeenCalled()
+    })
+
+    it('handles sensor scan error gracefully', async () => {
+      config.runSensorScan = vi.fn(async () => ({
+        success: false,
+        error: 'Scan failed'
+      }))
+      
+      const wrapper = createWrapper()
+      await new Promise(r => setTimeout(r, 100))
+      
+      // Should still have default option
+      expect(wrapper.vm.sensorOptions.length).toBeGreaterThan(0)
+    })
   })
 })
