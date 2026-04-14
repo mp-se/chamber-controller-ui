@@ -1,7 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { useConfigStore } from '../configStore'
-import { useGlobalStore } from '../globalStore'
+// Note: useGlobalStore is mocked below - tests use mockGlobal directly
+
+// Shared mock for the global store — always the same object so configStore's
+// lazy singleton (getGlobalStore) and test assertions see the same reference.
+const mockGlobal = {
+  disabled: false,
+  messageError: '',
+  messageSuccess: '',
+  messageInfo: '',
+  configChanged: false,
+  clearMessages: vi.fn()
+}
+
+vi.mock('@/modules/globalStore', () => ({
+  useGlobalStore: vi.fn(() => mockGlobal)
+}))
 
 // Mock the espframework components
 vi.mock('@mp-se/espframework-ui-components', () => ({
@@ -21,6 +36,13 @@ describe('configStore', () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     vi.clearAllMocks()
+    // Reset mock global state between tests
+    mockGlobal.disabled = false
+    mockGlobal.messageError = ''
+    mockGlobal.messageSuccess = ''
+    mockGlobal.messageInfo = ''
+    mockGlobal.configChanged = false
+    mockGlobal.clearMessages = vi.fn()
   })
 
   describe('state initialization', () => {
@@ -239,31 +261,99 @@ describe('configStore', () => {
   describe('restart action', () => {
     it('sends restart request to device', async () => {
       const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
-      
+
       http.restart.mockResolvedValue({
         success: true,
         json: { status: true, message: 'Device restarting' }
       })
-      
+
       const config = useConfigStore()
-      
+
       config.mdns = 'mybrewer'
       await config.restart()
-      
+
       expect(http.restart).toHaveBeenCalledWith('mybrewer', { redirectDelayMs: 8000 })
+    })
+
+    it('sets success message with redirect info', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      const global = mockGlobal
+      http.restart.mockResolvedValue({
+        success: true,
+        json: { status: true, message: 'Restarting' }
+      })
+      const config = useConfigStore()
+      config.mdns = 'mybrewer'
+
+      await config.restart()
+
+      expect(global.messageSuccess).toContain('mybrewer')
+    })
+
+    it('sets error when response has json but status is false', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      const global = mockGlobal
+      http.restart.mockResolvedValue({
+        success: true,
+        json: { status: false, message: 'Device busy' }
+      })
+
+      const config = useConfigStore()
+      await config.restart()
+
+      expect(global.messageError).toContain('Device busy')
+    })
+
+    it('uses fallback error text when json message is empty', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      const global = mockGlobal
+      http.restart.mockResolvedValue({
+        success: true,
+        json: { status: false, message: '' }
+      })
+
+      const config = useConfigStore()
+      await config.restart()
+
+      expect(global.messageError).toContain('Failed to restart device')
+    })
+
+    it('sets error when success is false (no json)', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      const global = mockGlobal
+      http.restart.mockResolvedValue({
+        success: false,
+        json: null
+      })
+
+      const config = useConfigStore()
+      await config.restart()
+
+      expect(global.messageError).toContain('Failed to request restart')
     })
 
     it('handles restart errors gracefully', async () => {
       const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
-      
+
       http.restart.mockRejectedValue(new Error('Connection error'))
-      
+
       const config = useConfigStore()
-      
+
       config.mdns = 'mybrewer'
-      
+
       // Should not throw even if restart fails
       await expect(config.restart()).resolves.toBeUndefined()
+    })
+
+    it('sets error message on restart exception', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      const global = mockGlobal
+      http.restart.mockRejectedValue(new Error('Connection error'))
+
+      const config = useConfigStore()
+      await config.restart()
+
+      expect(global.messageError).toContain('Failed to do restart')
     })
   })
 
@@ -332,37 +422,67 @@ describe('configStore', () => {
   describe('saveAll action', () => {
     it('calls sendConfig during saveAll', async () => {
       const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
-      
+
       http.postJson.mockResolvedValue({ success: true })
-      
+
       const config = useConfigStore()
       config.dark_mode = true
-      
+
       // Spy on sendConfig
       const sendConfigSpy = vi.spyOn(config, 'sendConfig')
-      
+
       await config.saveAll()
-      
+
       expect(sendConfigSpy).toHaveBeenCalled()
     })
 
     it('completes without throwing', async () => {
       const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
-      
+
       http.postJson.mockResolvedValue({ success: true })
-      
+
       const config = useConfigStore()
       config.dark_mode = true
-      
+
       // Should not throw
       await expect(config.saveAll()).resolves.toBeUndefined()
+    })
+
+    it('sets error message when sendConfig returns false', async () => {
+      const config = useConfigStore()
+      const global = mockGlobal
+      vi.spyOn(config, 'sendConfig').mockResolvedValue(false)
+
+      await config.saveAll()
+
+      expect(global.messageError).toContain('Failed to store configuration')
+    })
+
+    it('sets error message when sendConfig throws', async () => {
+      const config = useConfigStore()
+      const global = mockGlobal
+      vi.spyOn(config, 'sendConfig').mockRejectedValue(new Error('Unexpected error'))
+
+      await config.saveAll()
+
+      expect(global.messageError).toContain('Failed to save configuration')
+    })
+
+    it('sets success message when save completes', async () => {
+      const config = useConfigStore()
+      const global = mockGlobal
+      vi.spyOn(config, 'sendConfig').mockResolvedValue(true)
+
+      await config.saveAll()
+
+      expect(global.messageSuccess).toContain('Configuration has been saved')
     })
   })
 
   describe('global store integration', () => {
     it('gets global store instance', async () => {
       const config = useConfigStore()
-      const global = useGlobalStore()
+      const global = mockGlobal
       
       // Verify that global store exists and has expected properties
       expect(global).toBeDefined()
@@ -476,12 +596,228 @@ describe('configStore', () => {
   describe('PID controller configuration', () => {
     it('stores controller mode and target temperature', () => {
       const config = useConfigStore()
-      
+
       config.controller_mode = 'f'
       config.target_temperature = 20.5
-      
+
       expect(config.controller_mode).toBe('f')
       expect(config.target_temperature).toBe(20.5)
+    })
+  })
+
+  describe('sendConfig with actual HTTP call', () => {
+    it('calls postJson when config changes exist', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      http.postJson.mockResolvedValue({ success: true })
+
+      const config = useConfigStore()
+      // saveAll populates the configChanges baseline via saveConfigState
+      vi.spyOn(config, 'sendConfig').mockResolvedValueOnce(true)
+      await config.saveAll()
+      vi.restoreAllMocks()
+
+      // Now set a real baseline by spying on sendConfig and letting it run
+      http.postJson.mockResolvedValue({ success: true })
+      // Trigger saveConfigState by calling saveAll which calls sendConfig (true) then saveConfigState
+      const sendConfigSpy = vi.spyOn(config, 'sendConfig').mockResolvedValueOnce(true)
+      await config.saveAll()
+      sendConfigSpy.mockRestore()
+
+      // Mutate a field - now getConfigChanges will detect the difference
+      config.mdns = '__changed__'
+
+      const result = await config.sendConfig()
+      expect(result).toBe(true)
+      expect(http.postJson).toHaveBeenCalledWith('api/config', expect.objectContaining({ mdns: '__changed__' }))
+    })
+
+    it('returns false when postJson fails', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      http.postJson.mockResolvedValue({ success: true })
+
+      const config = useConfigStore()
+      // Populate baseline
+      vi.spyOn(config, 'sendConfig').mockResolvedValueOnce(true)
+      await config.saveAll()
+      vi.restoreAllMocks()
+
+      const sendConfigSpy2 = vi.spyOn(config, 'sendConfig').mockResolvedValueOnce(true)
+      await config.saveAll()
+      sendConfigSpy2.mockRestore()
+
+      config.mdns = '__fail_test__'
+      http.postJson.mockRejectedValue(new Error('Network error'))
+
+      const result = await config.sendConfig()
+      expect(result).toBe(false)
+    })
+  })
+
+  describe('runWifiScan action', () => {
+    it('returns success when wifi scan completes', async () => {
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendWifiScan').mockResolvedValue(true)
+      vi.spyOn(config, 'getWifiScanStatus').mockResolvedValue({
+        success: true,
+        data: { status: false, success: true, networks: ['net1'] }
+      })
+
+      const result = await config.runWifiScan()
+
+      expect(result.success).toBe(true)
+      expect(result.data.networks).toEqual(['net1'])
+    })
+
+    it('returns failure when sendWifiScan fails', async () => {
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendWifiScan').mockResolvedValue(false)
+
+      const result = await config.runWifiScan()
+
+      expect(result.success).toBe(false)
+    })
+
+    it('returns failure when getWifiScanStatus fails', async () => {
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendWifiScan').mockResolvedValue(true)
+      vi.spyOn(config, 'getWifiScanStatus').mockResolvedValue({
+        success: false,
+        data: null
+      })
+      const global = mockGlobal
+
+      const result = await config.runWifiScan()
+
+      expect(result.success).toBe(false)
+      expect(global.messageError).toContain('Failed to get wifi scan status')
+    })
+
+    it('polls again when scan is still in progress', async () => {
+      vi.useFakeTimers()
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendWifiScan').mockResolvedValue(true)
+
+      let callCount = 0
+      vi.spyOn(config, 'getWifiScanStatus').mockImplementation(async () => {
+        callCount++
+        if (callCount === 1) return { success: true, data: { status: true } }
+        return { success: true, data: { status: false, success: true, networks: [] } }
+      })
+
+      const resultPromise = config.runWifiScan()
+      await vi.runAllTimersAsync()
+      const result = await resultPromise
+
+      expect(result.success).toBe(true)
+      expect(callCount).toBe(2)
+      vi.useRealTimers()
+    })
+
+    it('sets error message when sendWifiScan fails inside runWifiScan', async () => {
+      const config = useConfigStore()
+      const global = mockGlobal
+      vi.spyOn(config, 'sendWifiScan').mockResolvedValue(false)
+
+      await config.runWifiScan()
+
+      expect(global.messageError).toContain('Failed to start wifi scan')
+    })
+  })
+
+  describe('runSensorScan action', () => {
+    it('returns success when sensor scan completes', async () => {
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendSensorScan').mockResolvedValue(true)
+      vi.spyOn(config, 'getSensorScanStatus').mockResolvedValue({
+        success: true,
+        data: { status: false, success: true, sensors: ['sensor1'] }
+      })
+
+      const result = await config.runSensorScan()
+
+      expect(result.success).toBe(true)
+      expect(result.data.sensors).toEqual(['sensor1'])
+    })
+
+    it('returns failure when sendSensorScan fails', async () => {
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendSensorScan').mockResolvedValue(false)
+
+      const result = await config.runSensorScan()
+
+      expect(result.success).toBe(false)
+    })
+
+    it('returns failure when getSensorScanStatus fails', async () => {
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendSensorScan').mockResolvedValue(true)
+      vi.spyOn(config, 'getSensorScanStatus').mockResolvedValue({
+        success: false,
+        data: null
+      })
+
+      const result = await config.runSensorScan()
+
+      expect(result.success).toBe(false)
+    })
+
+    it('polls again when sensor scan is still in progress', async () => {
+      vi.useFakeTimers()
+      const config = useConfigStore()
+      vi.spyOn(config, 'sendSensorScan').mockResolvedValue(true)
+
+      let callCount = 0
+      vi.spyOn(config, 'getSensorScanStatus').mockImplementation(async () => {
+        callCount++
+        if (callCount === 1) return { success: true, data: { status: true } }
+        return { success: true, data: { status: false, success: true, sensors: [] } }
+      })
+
+      const resultPromise = config.runSensorScan()
+      await vi.runAllTimersAsync()
+      const result = await resultPromise
+
+      expect(result.success).toBe(true)
+      expect(callCount).toBe(2)
+      vi.useRealTimers()
+    })
+  })
+
+  describe('getWifiScanStatus error path', () => {
+    it('returns failure on HTTP error', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      http.getJson.mockRejectedValue(new Error('Network error'))
+
+      const config = useConfigStore()
+      const result = await config.getWifiScanStatus()
+
+      expect(result.success).toBe(false)
+      expect(result.data).toBeNull()
+    })
+  })
+
+  describe('getSensorScanStatus error path', () => {
+    it('returns failure on HTTP error', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      http.getJson.mockRejectedValue(new Error('Network error'))
+
+      const config = useConfigStore()
+      const result = await config.getSensorScanStatus()
+
+      expect(result.success).toBe(false)
+      expect(result.data).toBeNull()
+    })
+  })
+
+  describe('sendSensorScan error path', () => {
+    it('returns false on HTTP error', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      http.request.mockRejectedValue(new Error('Request failed'))
+
+      const config = useConfigStore()
+      const result = await config.sendSensorScan()
+
+      expect(result).toBe(false)
     })
   })
 

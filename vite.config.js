@@ -20,7 +20,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{js,vue}'],
-      exclude: ['node_modules/', 'src/**/*.test.js', 'src/tests/**']
+      exclude: ['node_modules/', 'src/**/*.test.js', 'src/tests/**', 'src/main.js']
     }
   },
   plugins: [

@@ -293,6 +293,50 @@ describe('PushInfluxdbView', () => {
     })
   })
 
+  describe('v-model bindings', () => {
+    const createInteractiveWrapper = () =>
+      mount(PushInfluxdbView, {
+        global: {
+          stubs: {
+            BsInputText: {
+              template:
+                '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+              props: ['modelValue', 'label', 'help', 'type', 'maxlength', 'disabled']
+            },
+            BsButton: { template: '<button><slot /></button>' }
+          }
+        }
+      })
+
+    it('updates influxdb2_target via v-model', async () => {
+      const wrapper = createInteractiveWrapper()
+      const inputs = wrapper.findAll('input')
+      await inputs[0].setValue('http://influx.example.com')
+      expect(config.influxdb2_target).toBe('http://influx.example.com')
+    })
+
+    it('updates influxdb2_org via v-model', async () => {
+      const wrapper = createInteractiveWrapper()
+      const inputs = wrapper.findAll('input')
+      await inputs[1].setValue('myorg')
+      expect(config.influxdb2_org).toBe('myorg')
+    })
+
+    it('updates influxdb2_bucket via v-model', async () => {
+      const wrapper = createInteractiveWrapper()
+      const inputs = wrapper.findAll('input')
+      await inputs[2].setValue('mybucket')
+      expect(config.influxdb2_bucket).toBe('mybucket')
+    })
+
+    it('updates influxdb2_token via v-model', async () => {
+      const wrapper = createInteractiveWrapper()
+      const inputs = wrapper.findAll('input')
+      await inputs[3].setValue('secret_token')
+      expect(config.influxdb2_token).toBe('secret_token')
+    })
+  })
+
   describe('button interaction', () => {
     it('save button is disabled when global.disabled is true', () => {
       global.disabled = true

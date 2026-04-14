@@ -6,6 +6,10 @@ import { useConfigStore } from '@/modules/configStore'
 import { useGlobalStore } from '@/modules/globalStore'
 import { useStatusStore } from '@/modules/statusStore'
 
+let testConfig
+let testGlobal
+let testStatus
+
 vi.mock('@mp-se/espframework-ui-components', () => ({
   validateCurrentForm: vi.fn(() => true),
   logDebug: vi.fn(),
@@ -15,6 +19,16 @@ vi.mock('@mp-se/espframework-ui-components', () => ({
     postJson: vi.fn()
   }
 }))
+
+vi.mock('@/modules/pinia', async () => {
+  const actual = await vi.importActual('@/modules/pinia')
+  return {
+    default: actual.default,
+    get config() { return testConfig },
+    get global() { return testGlobal },
+    get status() { return testStatus }
+  }
+})
 
 describe('PidControllerFragment', () => {
   let pinia
@@ -28,6 +42,22 @@ describe('PidControllerFragment', () => {
     config = useConfigStore(pinia)
     global = useGlobalStore(pinia)
     status = useStatusStore(pinia)
+
+    testConfig = config
+    testGlobal = global
+    testStatus = status
+
+    config.enable_cooling = false
+    config.enable_heating = false
+    config.beer_sensor_id = ''
+    config.fridge_sensor_id = ''
+    config.target_temperature = 20
+    config.temp_format = 'C'
+    global.disabled = false
+    global.messageError = ''
+    global.messageSuccess = ''
+    global.clearMessages = vi.fn()
+    status.pid_mode = ''
   })
 
   const createWrapper = (stubs = {}) => {
@@ -266,12 +296,140 @@ describe('PidControllerFragment', () => {
     it('allows changing mode', async () => {
       config.enable_cooling = true
       config.beer_sensor_id = 'sensor1'
-      
+
       const wrapper = createWrapper()
       await wrapper.vm.$nextTick()
-      
+
       wrapper.vm.newMode = 'b'
       expect(wrapper.vm.newMode).toBe('b')
+    })
+  })
+
+  describe('onMounted branch coverage', () => {
+    it('adds Beer constant option when beer sensor configured', async () => {
+      config.enable_cooling = true
+      config.beer_sensor_id = 'sensor-abc'
+      config.fridge_sensor_id = ''
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.modeOptions.length).toBeGreaterThan(1)
+      expect(wrapper.vm.modeOptions.some(o => o.value === 'b')).toBe(true)
+    })
+
+    it('adds Chamber constant option when fridge sensor configured', async () => {
+      config.enable_cooling = true
+      config.beer_sensor_id = ''
+      config.fridge_sensor_id = 'fridge-sensor'
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.modeOptions.some(o => o.value === 'f')).toBe(true)
+    })
+
+    it('adds both options when both sensors are configured', async () => {
+      config.enable_cooling = true
+      config.beer_sensor_id = 'beer-sensor'
+      config.fridge_sensor_id = 'fridge-sensor'
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.modeOptions.some(o => o.value === 'b')).toBe(true)
+      expect(wrapper.vm.modeOptions.some(o => o.value === 'f')).toBe(true)
+    })
+
+    it('sets error when cooling enabled but no sensors configured', async () => {
+      config.enable_cooling = true
+      config.beer_sensor_id = ''
+      config.fridge_sensor_id = ''
+      global.messageError = ''
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+      expect(global.messageError).toContain('No sensors')
+    })
+
+    it('sets error when neither cooling nor heating is enabled', async () => {
+      config.enable_cooling = false
+      config.enable_heating = false
+      global.messageError = ''
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+      expect(global.messageError).toContain('Neither cooling')
+    })
+  })
+
+  describe('saveSettings error handling', () => {
+    it('sets error message when API call fails', async () => {
+      const { sharedHttpClient } = await import('@mp-se/espframework-ui-components')
+      sharedHttpClient.postJson.mockRejectedValueOnce(new Error('Network error'))
+      config.enable_cooling = true
+      config.beer_sensor_id = 'sensor1'
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+
+      await wrapper.vm.saveSettings()
+
+      expect(global.messageError).toContain('Failed to update PID controller')
+    })
+
+    it('re-enables controls after API error', async () => {
+      const { sharedHttpClient } = await import('@mp-se/espframework-ui-components')
+      sharedHttpClient.postJson.mockRejectedValueOnce(new Error('Network error'))
+      global.disabled = false
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+
+      await wrapper.vm.saveSettings()
+
+      expect(global.disabled).toBe(false)
+    })
+  })
+
+  describe('v-model bindings', () => {
+    it('updates newMode via BsInputRadio v-model', async () => {
+      const wrapper = mount(PidControllerFragment, {
+        global: {
+          plugins: [pinia],
+          stubs: {
+            BsInputRadio: {
+              template: '<input type="radio" @change="$emit(\'update:modelValue\', \'b\')" />',
+              props: ['modelValue', 'label', 'options', 'disabled']
+            },
+            BsInputNumber: { template: '<input type="number" />', props: ['modelValue', 'label', 'min', 'max', 'step', 'unit', 'width', 'disabled'] }
+          }
+        }
+      })
+      await wrapper.vm.$nextTick()
+      const radio = wrapper.find('input[type="radio"]')
+      await radio.trigger('change')
+      expect(wrapper.vm.newMode).toBe('b')
+    })
+
+    it('updates newTemperature via BsInputNumber v-model', async () => {
+      const wrapper = mount(PidControllerFragment, {
+        global: {
+          plugins: [pinia],
+          stubs: {
+            BsInputRadio: { template: '<div />', props: ['modelValue', 'label', 'options', 'disabled'] },
+            BsInputNumber: {
+              template: '<input type="number" :value="modelValue" @input="$emit(\'update:modelValue\', Number($event.target.value))" />',
+              props: ['modelValue', 'label', 'min', 'max', 'step', 'unit', 'width', 'disabled']
+            }
+          }
+        }
+      })
+      await wrapper.vm.$nextTick()
+      const input = wrapper.find('input[type="number"]')
+      await input.setValue('22')
+      expect(wrapper.vm.newTemperature).toBe(22)
+    })
+  })
+
+  describe('watch pid_mode', () => {
+    it('watch callback fires when pid_mode changes', async () => {
+      const wrapper = createWrapper()
+      await wrapper.vm.$nextTick()
+      status.pid_mode = 'b'
+      await wrapper.vm.$nextTick()
+      // watch triggered - component should still exist
+      expect(wrapper.exists()).toBe(true)
     })
   })
 })

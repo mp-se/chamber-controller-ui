@@ -229,6 +229,35 @@ describe('DeviceWifi2View (action tests)', () => {
     expect(wrapper.find('form').exists()).toBe(true)
   })
 
+  it('wifi_scan_ap v-model is triggered when enableScanForStrongestAp is enabled', async () => {
+    const { createTestingPinia } = await import('../../tests/testUtils')
+    const { mount } = await import('@vue/test-utils')
+    const { default: View } = await import('../DeviceWifi2View.vue')
+    const { global, config } = await import('@/modules/pinia')
+    global.ui.enableScanForStrongestAp = true
+    config.wifi_scan_ap = false
+    const wrapper = mount(View, {
+      global: {
+        plugins: [createTestingPinia()],
+        stubs: {
+          BsMessage: { template: '<div />' },
+          BsInputText: true,
+          BsInputNumber: true,
+          BsInputSwitch: {
+            template: '<input type="checkbox" :checked="modelValue" @change="$emit(\'update:modelValue\', $event.target.checked)" />',
+            props: ['modelValue', 'label', 'help', 'disabled'],
+            emits: ['update:modelValue']
+          }
+        }
+      }
+    })
+    const checkbox = wrapper.find('input[type="checkbox"]')
+    expect(checkbox.exists()).toBe(true)
+    await checkbox.setValue(true)
+    expect(config.wifi_scan_ap).toBe(true)
+    global.ui.enableScanForStrongestAp = false
+  })
+
   it('enableScanForStrongestAp false hides WiFi scan switch', async () => {
     const { createTestingPinia } = await import('../../tests/testUtils')
     const { mount } = await import('@vue/test-utils')

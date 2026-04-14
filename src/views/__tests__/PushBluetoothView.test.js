@@ -277,6 +277,30 @@ describe('PushBluetoothView', () => {
     })
   })
 
+  describe('v-model bindings', () => {
+    it('updates ble_push_enabled via v-model when BLE available', async () => {
+      global.feature.ble = true
+      config.ble_push_enabled = false
+
+      const wrapper = mount(PushBluetoothView, {
+        global: {
+          stubs: {
+            BsInputSwitch: {
+              template:
+                '<input type="checkbox" :checked="modelValue" @change="$emit(\'update:modelValue\', $event.target.checked)" />',
+              props: ['modelValue', 'label', 'disabled']
+            },
+            BsButton: { template: '<button><slot /></button>' }
+          }
+        }
+      })
+
+      const checkbox = wrapper.find('input[type="checkbox"]')
+      await checkbox.setValue(true)
+      expect(config.ble_push_enabled).toBe(true)
+    })
+  })
+
   describe('button interaction', () => {
     it('save button is disabled when global.disabled is true', () => {
       global.disabled = true
