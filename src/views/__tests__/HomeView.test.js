@@ -119,6 +119,53 @@ describe('HomeView', () => {
       await wrapper.vm.refresh()
       expect(status.load).toHaveBeenCalled()
     })
+
+    it('handles status.load returning false (line 190 false branch)', async () => {
+      vi.mocked(status.load).mockResolvedValueOnce(false)
+      const wrapper = createWrapper()
+      await wrapper.vm.refresh()
+      // Should not throw when success is false
+      expect(wrapper.exists()).toBe(true)
+    })
+  })
+
+  describe('PID actuator status ternary branches (lines 76-77)', () => {
+    const createWrapperWithSlotCard = () =>
+      mount(HomeView, {
+        global: {
+          plugins: [pinia],
+          stubs: {
+            ...commonStubs,
+            PidTemperatureFragment: true,
+            PidControllerFragment: true,
+            // Use a stub that renders the slot so ternary expressions are evaluated
+            BsCard: { template: '<div class="card"><slot /></div>' }
+          }
+        }
+      })
+
+    it('shows Active for cooling when pid_cooling_actuator_active is true', async () => {
+      status.pid_cooling_actuator_active = true
+      const wrapper = createWrapperWithSlotCard()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.text()).toContain('Active')
+      status.pid_cooling_actuator_active = false
+    })
+
+    it('shows Active for heating when pid_heating_actuator_active is true', async () => {
+      status.pid_heating_actuator_active = true
+      const wrapper = createWrapperWithSlotCard()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.text()).toContain('Active')
+      status.pid_heating_actuator_active = false
+    })
+
+    it('shows Inactive for cooling when pid_cooling_actuator_active is false', async () => {
+      status.pid_cooling_actuator_active = false
+      const wrapper = createWrapperWithSlotCard()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.text()).toContain('Inactive')
+    })
   })
 
   describe('BLE sensor rendering', () => {

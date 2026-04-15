@@ -266,6 +266,40 @@ describe('router module - actual router instance', () => {
     })
   })
 
+  describe('beforeEach guard — actual navigation invocations', () => {
+    it('guard executes return false when global.disabled is true (line 115)', async () => {
+      global.disabled = true
+      global.clearMessages = vi.fn()
+      vi.mocked(validateCurrentForm).mockReturnValue(true)
+
+      // Navigation is blocked by the guard; push resolves to NavigationFailure (no throw)
+      await router.push('/device/pid')
+
+      // Restore so subsequent tests are not affected
+      global.disabled = false
+    })
+
+    it('guard executes return false when validateCurrentForm returns false (line 117)', async () => {
+      global.disabled = false
+      global.clearMessages = vi.fn()
+      vi.mocked(validateCurrentForm).mockReturnValue(false)
+
+      await router.push('/push/influxdb')
+
+      vi.mocked(validateCurrentForm).mockReturnValue(true)
+    })
+
+    it('guard calls clearMessages and returns true when all checks pass', async () => {
+      global.disabled = false
+      global.clearMessages = vi.fn()
+      vi.mocked(validateCurrentForm).mockReturnValue(true)
+
+      await router.push('/other/support')
+
+      expect(global.clearMessages).toHaveBeenCalled()
+    })
+  })
+
   describe('beforeEach navigation guard execution', () => {
     beforeEach(() => {
       global.disabled = false

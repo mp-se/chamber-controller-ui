@@ -218,6 +218,42 @@ describe('FirmwareView (interaction tests)', () => {
     expect(wrapper.html()).toContain('badge')
     expect(wrapper.html()).toContain('Platform:')
   })
+
+  it('renders hardware badge when global.hardware is set (line 38 branch)', () => {
+    global.hardware = 'ESP32-S3'
+
+    const wrapper = mount(FirmwareView, {
+      global: {
+        stubs: {
+          BsFileUpload: true,
+          BsProgress: true
+        }
+      }
+    })
+
+    expect(wrapper.html()).toContain('ESP32-S3')
+
+    // Cleanup
+    global.hardware = undefined
+  })
+
+  it('renders firmware filename badge when global.firmware_file is set (line 40 branch)', () => {
+    global.firmware_file = 'chamber-controller-esp32.bin'
+
+    const wrapper = mount(FirmwareView, {
+      global: {
+        stubs: {
+          BsFileUpload: true,
+          BsProgress: true
+        }
+      }
+    })
+
+    expect(wrapper.html()).toContain('chamber-controller-esp32.bin')
+
+    // Cleanup
+    global.firmware_file = ''
+  })
 })
 
 describe('FirmwareView (action tests)', () => {
@@ -458,5 +494,22 @@ describe('FirmwareView (action tests)', () => {
     vi.useRealTimers()
     vi.restoreAllMocks()
     expect(wrapper.exists()).toBe(true)
+  })
+
+  it('upload sets error message when http.uploadFile throws (line 156)', async () => {
+    const wrapper = mountView()
+    const fakeFile = new File(['fw'], 'firmware.bin')
+    const fakeElement = { files: [fakeFile] }
+    vi.spyOn(document, 'getElementById').mockReturnValue(fakeElement)
+
+    // Make uploadFile throw to trigger the catch block at line 156
+    http.uploadFile.mockRejectedValue(new Error('Network timeout'))
+
+    await wrapper.vm.upload()
+
+    expect(global.messageError).toContain('Upload error')
+
+    vi.restoreAllMocks()
+    global.messageError = ''
   })
 })

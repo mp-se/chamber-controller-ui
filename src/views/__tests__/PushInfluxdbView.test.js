@@ -388,4 +388,52 @@ describe('PushInfluxdbView', () => {
       expect(buttons.length).toBeGreaterThan(0)
     })
   })
+
+  describe('save validation (line 95)', () => {
+    it('does not call saveAll when validateCurrentForm returns false', async () => {
+      const { validateCurrentForm } = await import('@mp-se/espframework-ui-components')
+      vi.mocked(validateCurrentForm).mockReturnValueOnce(false)
+
+      config.saveAll = vi.fn()
+
+      const wrapper = mount(PushInfluxdbView, {
+        global: {
+          stubs: {
+            BsInputText: { template: '<input />' },
+            BsButton: { template: '<button><slot /></button>' }
+          }
+        }
+      })
+
+      const form = wrapper.find('form')
+      if (form.exists()) {
+        await form.trigger('submit')
+        await wrapper.vm.$nextTick()
+        expect(config.saveAll).not.toHaveBeenCalled()
+      } else {
+        await wrapper.vm.save()
+        expect(config.saveAll).not.toHaveBeenCalled()
+      }
+    })
+
+    it('save returns early when validation fails', async () => {
+      const { validateCurrentForm } = await import('@mp-se/espframework-ui-components')
+      vi.mocked(validateCurrentForm).mockReturnValueOnce(false)
+
+      config.saveAll = vi.fn()
+
+      const wrapper = mount(PushInfluxdbView, {
+        global: {
+          stubs: {
+            BsInputText: { template: '<input />' },
+            BsButton: { template: '<button><slot /></button>' }
+          }
+        }
+      })
+
+      await wrapper.vm.save()
+
+      expect(config.saveAll).not.toHaveBeenCalled()
+    })
+  })
 })

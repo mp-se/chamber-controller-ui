@@ -352,4 +352,53 @@ describe('PushBluetoothView', () => {
       expect(buttons.length).toBeGreaterThan(0)
     })
   })
+
+  describe('save validation (line 77)', () => {
+    it('does not call saveAll when validateCurrentForm returns false', async () => {
+      const { validateCurrentForm } = await import('@mp-se/espframework-ui-components')
+      vi.mocked(validateCurrentForm).mockReturnValueOnce(false)
+
+      config.saveAll = vi.fn()
+
+      const wrapper = mount(PushBluetoothView, {
+        global: {
+          stubs: {
+            BsInputSwitch: { template: '<input type="checkbox" />' },
+            BsButton: { template: '<button><slot /></button>' }
+          }
+        }
+      })
+
+      const form = wrapper.find('form')
+      if (form.exists()) {
+        await form.trigger('submit')
+        await wrapper.vm.$nextTick()
+        expect(config.saveAll).not.toHaveBeenCalled()
+      } else {
+        // Trigger save directly
+        await wrapper.vm.save()
+        expect(config.saveAll).not.toHaveBeenCalled()
+      }
+    })
+
+    it('save returns early without clearMessages when validation fails', async () => {
+      const { validateCurrentForm } = await import('@mp-se/espframework-ui-components')
+      vi.mocked(validateCurrentForm).mockReturnValueOnce(false)
+
+      global.clearMessages = vi.fn()
+
+      const wrapper = mount(PushBluetoothView, {
+        global: {
+          stubs: {
+            BsInputSwitch: { template: '<input type="checkbox" />' },
+            BsButton: { template: '<button><slot /></button>' }
+          }
+        }
+      })
+
+      await wrapper.vm.save()
+
+      expect(global.clearMessages).not.toHaveBeenCalled()
+    })
+  })
 })

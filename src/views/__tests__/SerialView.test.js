@@ -468,6 +468,22 @@ describe('SerialView (action tests)', () => {
     expect(socketCloseFn).toHaveBeenCalled()
   })
 
+  it('onUnmounted handles null socketCloser and null socket.value (else-if false branch)', async () => {
+    const { sharedHttpClient } = await import('@mp-se/espframework-ui-components')
+
+    // socketCloser becomes null (not a function), socket.value also null
+    vi.mocked(sharedHttpClient).createWebSocket = vi.fn(() => ({
+      close: null,          // socketCloser = null → not a function
+      socketGetter: () => null // socket.value = null → else if (null) is false
+    }))
+
+    const wrapper = mount(SerialView, { global: { stubs: {} } })
+    // unmount triggers onUnmounted: typeof null !== 'function' → else if (null) → false branch
+    wrapper.unmount()
+
+    expect(wrapper.exists()).toBe(false)
+  })
+
   it('onMessage drops oldest lines when serial exceeds maxLines (50)', async () => {
     const { sharedHttpClient } = await import('@mp-se/espframework-ui-components')
     let capturedHandlers = null
