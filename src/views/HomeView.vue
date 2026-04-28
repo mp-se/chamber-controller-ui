@@ -82,6 +82,15 @@
         <div class="col-md-4">
           <BsCard header="PID" color="success" title="Sensors">
             <p class="text-center">
+              Fridge sensor: {{ status.fridge_sensor_id }}<br />
+              Beer sensor: {{ status.beer_sensor_id }}
+            </p>
+          </BsCard>
+        </div>
+
+        <div class="col-md-4">
+          <BsCard header="PID" color="success" title="Sensors">
+            <p class="text-center">
               Chamber: {{ formatTemp(status.pid_fridge_temp) }}°{{ config.temp_format }}<br />
               Beer: {{ formatTemp(status.pid_beer_temp) }}°{{ config.temp_format }}
             </p>

@@ -17,7 +17,7 @@
 -->
 
 <template>
-  <div class="card h-100">
+  <div class="card h-100"  v-if="status.remote_control_active === false">
     <div class="card-header bg-success-subtle">Controller</div>
     <div class="card-body">
       <form @submit.prevent="saveSettings" class="needs-validation" novalidate>
@@ -60,6 +60,15 @@
       </form>
     </div>
   </div>
+
+  <div class="card h-100"  v-else>
+    <div class="card-header bg-success-subtle">Controller</div>
+    <div class="card-body">
+      <p class="text-center">
+        Remote control is active, local control is disabled.
+      </p>
+    </div>
+  </div>  
 </template>
 
 <script setup>

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { nextTick } from 'vue'
 import piniaInstance, { global, config, status, saveConfigState, getConfigChanges } from '@/modules/pinia'
 
 describe('pinia module', () => {
@@ -177,7 +178,9 @@ describe('pinia module exports', () => {
   it('saveConfigState captures config values', () => {
     config.mdns = 'test-device'
     saveConfigState()
-    expect(config.mdns).toBe('test-device')
+    // After saving, no changes should be detected
+    const changes = getConfigChanges()
+    expect(changes).toEqual({})
   })
 
   it('getConfigChanges detects modified values', () => {
@@ -185,7 +188,7 @@ describe('pinia module exports', () => {
     saveConfigState()
     config.mdns = 'modified'
     const changes = getConfigChanges()
-    expect(typeof changes).toBe('object')
+    expect(changes).toHaveProperty('mdns', 'modified')
   })
 
   it('configChanged flag is managed by config store', () => {
@@ -239,41 +242,38 @@ describe('pinia $subscribe callback (lines 79-86)', () => {
   })
 
   it('$subscribe with diff > 2 chars sets configChanged=true (line 83)', async () => {
-    const { logDebug } = await import('@mp-se/espframework-ui-components')
-
     global.initialized = false
     const base = 'base_' + Date.now()
     config.mdns = base
     saveConfigState()
+    global.configChanged = false
 
     global.initialized = true
+    config.mdns = base + '_changed'
+    await nextTick()
 
-    // Change to something sufficiently different that getConfigChanges returns a non-empty object
-    config.mdns = base + '_longer_unique_suffix_definitely_changes'
-
-    // The subscribe fired and processed. Even if the exact value of configChanged
-    // depends on other state, we verify the callback ran by checking logDebug calls
-    expect(logDebug).toHaveBeenCalled()
+    expect(global.configChanged).toBe(true)
 
     global.initialized = false
     config.mdns = base
   })
 
   it('$subscribe with no changes sets configChanged=false (line 86)', async () => {
-    // Establish baseline state
     global.initialized = false
-    const stableVal = 'same_' + Date.now()
-    config.mdns = stableVal
-    saveConfigState() // save with stableVal — same value, so getConfigChanges should return {}
+    const base = 'base_' + Date.now()
+    config.mdns = base
+    saveConfigState()
 
+    // Change to a different value first so configChanged becomes true
     global.initialized = true
+    config.mdns = base + '_changed'
+    await nextTick()
+    expect(global.configChanged).toBe(true)
 
-    // Set mdns to the same value (no change)
-    config.mdns = stableVal // same value → diff should be empty
-
-    // getConfigChanges should return empty since nothing changed
-    const changes = getConfigChanges()
-    expect(changes).toEqual({})
+    // Now change back to the baseline value — subscribe should set configChanged=false
+    config.mdns = base
+    await nextTick()
+    expect(global.configChanged).toBe(false)
 
     global.initialized = false
   })

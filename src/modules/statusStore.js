@@ -38,6 +38,8 @@ export const useStatusStore = defineStore('status', {
       uptime_hours: 0,
       uptime_days: 0,
 
+      remote_control_active: false,
+
       pid_mode: '',
       pid_state: 0,
       pid_state_string: '',
@@ -54,6 +56,9 @@ export const useStatusStore = defineStore('status', {
       pid_time_since_cooling: 0,
       pid_time_since_heating: 0,
       pid_time_since_idle: 0,
+
+      fridge_sensor_id: '',
+      beer_sensor_id: '',
 
       temperature_device: [],
 
@@ -79,6 +84,9 @@ export const useStatusStore = defineStore('status', {
         this.uptime_minutes = json.uptime_minutes
         this.uptime_hours = json.uptime_hours
         this.uptime_days = json.uptime_days
+        
+        this.remote_control_active = json.remote_control_active
+
         this.pid_mode = json.pid_mode
         this.pid_state = json.pid_state
         this.pid_state_string = json.pid_state_string
@@ -95,6 +103,10 @@ export const useStatusStore = defineStore('status', {
         this.pid_time_since_cooling = json.pid_time_since_cooling
         this.pid_time_since_heating = json.pid_time_since_heating
         this.pid_time_since_idle = json.pid_time_since_idle
+
+        this.fridge_sensor_id = json.fridge_sensor_id
+        this.beer_sensor_id = json.beer_sensor_id
+
         this.temperature_device = json.temperature_device
 
         logInfo('statusStore:load()', 'Fetching /api/status completed')

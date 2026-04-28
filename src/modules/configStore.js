@@ -37,12 +37,14 @@ const getGlobalStore = async () => {
   return globalStore
 }
 
-const saveConfigState = async (config) => {
+export const saveConfigState = async (config) => {
   logDebug('configStore:saveConfigState()', 'Saving state')
   configChanges = {}
   for (const key in config) {
-    if (typeof config[key] !== 'function' && key !== '$id') {
-      configChanges[key] = config[key]
+    const val = config[key]
+    if (typeof val !== 'function' && key !== '$id') {
+      // Store a plain primitive copy — all config values are strings/numbers/booleans
+      configChanges[key] = val === null || val === undefined ? val : val.valueOf()
     }
   }
   logDebug('configStore:saveConfigState()', 'Saved state: ', configChanges)
@@ -50,7 +52,7 @@ const saveConfigState = async (config) => {
   global.configChanged = false
 }
 
-const getConfigChanges = (config) => {
+export const getConfigChanges = (config) => {
   const changes = {}
 
   if (Object.keys(configChanges).length === 0) {
@@ -167,6 +169,7 @@ export const useConfigStore = defineStore('config', {
         this.ble_scan_enabled = json.ble_scan_enabled
         this.ble_sensor_valid_time = json.ble_sensor_valid_time
         logInfo('configStore.load()', 'Fetching /api/config completed')
+        await saveConfigState(this)
         return true
       } catch (err) {
         logError('configStore.load()', err)
@@ -191,6 +194,7 @@ export const useConfigStore = defineStore('config', {
 
       try {
         await http.postJson('api/config', data)
+        await saveConfigState(this)
         global.disabled = false
         logInfo('configStore.sendConfig()', 'Sending /api/config completed')
         return true
@@ -289,7 +293,6 @@ export const useConfigStore = defineStore('config', {
         }
 
         global.messageSuccess = 'Configuration has been saved to device'
-        await saveConfigState(this)
       } catch (error) {
         logError('configStore.saveAll()', error)
         global.messageError = 'Failed to save configuration'

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { useConfigStore } from '../configStore'
+import { useConfigStore, saveConfigState } from '../configStore'
 // Note: useGlobalStore is mocked below - tests use mockGlobal directly
 
 // Shared mock for the global store — always the same object so configStore's
@@ -32,10 +32,13 @@ vi.mock('@mp-se/espframework-ui-components', () => ({
 }))
 
 describe('configStore', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     vi.clearAllMocks()
+    // Reset baseline by creating a fresh store instance and saving its state
+    const freshConfig = useConfigStore()
+    await saveConfigState(freshConfig)
     // Reset mock global state between tests
     mockGlobal.disabled = false
     mockGlobal.messageError = ''
@@ -255,6 +258,77 @@ describe('configStore', () => {
       expect(result).toBe(true)
       // The HTTP client should not be called since there are no changes
       expect(http.postJson).not.toHaveBeenCalled()
+    })
+
+    it('detects and sends changes after loading config', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      
+      // Mock load response
+      const mockData = {
+        id: 'device-123',
+        mdns: 'mybrewer',
+        temp_format: 'C',
+        ota_url: 'http://example.com/ota',
+        restart_interval: 3600,
+        wifi_portal_timeout: 300,
+        wifi_connect_timeout: 30,
+        wifi_ssid: 'MyWiFi',
+        wifi_ssid2: '',
+        wifi_pass: 'password',
+        wifi_pass2: '',
+        push_timeout: 60,
+        http_post_target: 'http://example.com/post',
+        http_post_header1: '',
+        http_post_header2: '',
+        http_post2_target: '',
+        http_post2_header1: '',
+        http_post2_header2: '',
+        http_get_target: '',
+        http_get_header1: '',
+        http_get_header2: '',
+        influxdb2_target: 'http://influx:8086',
+        influxdb2_bucket: 'mybucket',
+        influxdb2_org: 'myorg',
+        influxdb2_token: 'mytoken',
+        mqtt_target: 'mqtt.example.com',
+        mqtt_port: 1883,
+        mqtt_user: 'user',
+        mqtt_pass: 'pass',
+        dark_mode: true,
+        fridge_sensor_id: 'sensor1',
+        beer_sensor_id: 'original-beer-sensor',
+        beer_ble_sensor_id: 'ble1',
+        fridge_sensor_offset: 0.5,
+        beer_sensor_offset: -0.25,
+        controller_mode: 'f',
+        target_temperature: 20,
+        enable_cooling: true,
+        enable_heating: false,
+        invert_pins: false,
+        ble_push_enabled: true,
+        ble_scan_enabled: true,
+        ble_sensor_valid_time: 300
+      }
+      
+      http.getJson.mockResolvedValue(mockData)
+      http.postJson.mockResolvedValue({ success: true })
+      
+      const config = useConfigStore()
+      
+      // Load config from API
+      const loadResult = await config.load()
+      expect(loadResult).toBe(true)
+      expect(config.beer_sensor_id).toBe('original-beer-sensor')
+      
+      // Change a field
+      config.beer_sensor_id = '2817557997210309'
+      
+      // Send config - should detect the change and POST it
+      const sendResult = await config.sendConfig()
+      expect(sendResult).toBe(true)
+      expect(http.postJson).toHaveBeenCalledWith('api/config', expect.objectContaining({
+        beer_sensor_id: '2817557997210309'
+      }))
     })
   })
 
@@ -476,6 +550,89 @@ describe('configStore', () => {
       await config.saveAll()
 
       expect(global.messageSuccess).toContain('Configuration has been saved')
+    })
+
+    it('establishes new baseline after successful save', async () => {
+      const { sharedHttpClient: http } = await import('@mp-se/espframework-ui-components')
+      
+      // Mock load response
+      const mockData = {
+        id: 'device-123',
+        mdns: 'mybrewer',
+        temp_format: 'C',
+        ota_url: 'http://example.com/ota',
+        restart_interval: 3600,
+        wifi_portal_timeout: 300,
+        wifi_connect_timeout: 30,
+        wifi_ssid: 'MyWiFi',
+        wifi_ssid2: '',
+        wifi_pass: 'password',
+        wifi_pass2: '',
+        push_timeout: 60,
+        http_post_target: 'http://example.com/post',
+        http_post_header1: '',
+        http_post_header2: '',
+        http_post2_target: '',
+        http_post2_header1: '',
+        http_post2_header2: '',
+        http_get_target: '',
+        http_get_header1: '',
+        http_get_header2: '',
+        influxdb2_target: 'http://influx:8086',
+        influxdb2_bucket: 'mybucket',
+        influxdb2_org: 'myorg',
+        influxdb2_token: 'mytoken',
+        mqtt_target: 'mqtt.example.com',
+        mqtt_port: 1883,
+        mqtt_user: 'user',
+        mqtt_pass: 'pass',
+        dark_mode: false,
+        fridge_sensor_id: 'sensor1',
+        beer_sensor_id: 'original-beer-sensor',
+        beer_ble_sensor_id: 'ble1',
+        fridge_sensor_offset: 0.5,
+        beer_sensor_offset: -0.25,
+        controller_mode: 'f',
+        target_temperature: 20,
+        enable_cooling: true,
+        enable_heating: false,
+        invert_pins: false,
+        ble_push_enabled: true,
+        ble_scan_enabled: true,
+        ble_sensor_valid_time: 300
+      }
+      
+      http.getJson.mockResolvedValue(mockData)
+      http.postJson.mockResolvedValue({ success: true })
+      
+      const config = useConfigStore()
+      
+      // Load config
+      await config.load()
+      expect(config.dark_mode).toBe(false)
+      
+      // Change and save
+      config.dark_mode = true
+      await config.saveAll()
+      
+      // Verify change was sent
+      expect(http.postJson).toHaveBeenCalledWith('api/config', expect.objectContaining({
+        dark_mode: true
+      }))
+      
+      // Now the baseline should be reset, so no changes detected yet
+      http.postJson.mockClear()
+      const sendResult = await config.sendConfig()
+      expect(sendResult).toBe(true)
+      expect(http.postJson).not.toHaveBeenCalled()
+      
+      // But if we change something else, it should be detected
+      config.target_temperature = 25
+      const sendResult2 = await config.sendConfig()
+      expect(sendResult2).toBe(true)
+      expect(http.postJson).toHaveBeenCalledWith('api/config', expect.objectContaining({
+        target_temperature: 25
+      }))
     })
   })
 

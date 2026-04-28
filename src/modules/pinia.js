@@ -17,11 +17,10 @@
  *
  */
 
-import { ref } from 'vue'
 import { createPinia } from 'pinia'
 import { useGlobalStore } from '@/modules/globalStore'
 import { useStatusStore } from '@/modules/statusStore'
-import { useConfigStore } from '@/modules/configStore'
+import { useConfigStore, saveConfigState as _saveConfigState, getConfigChanges as _getConfigChanges } from '@/modules/configStore'
 import { logDebug } from '@mp-se/espframework-ui-components'
 
 const piniaInstance = createPinia()
@@ -34,49 +33,10 @@ const status = useStatusStore(piniaInstance)
 
 export { global, status, config }
 
-const configCompare = ref(null)
-
-// This function is now also defined in configStore.js
-// Keeping this here for the $subscribe mechanism
-const saveConfigState = () => {
-  logDebug('pinia:saveConfigState()', 'Saving state')
-
-  configCompare.value = {}
-  for (var key in config) {
-    if (typeof config[key] !== 'function' && key !== '$id') {
-      configCompare.value[key] = config[key]
-    }
-  }
-
-  logDebug('pinia:saveConfigState()', 'Saved state: ', configCompare.value)
-  global.configChanged = false
-}
-
-// This function is now also defined in configStore.js
-// Keeping this here for the $subscribe mechanism
-const getConfigChanges = () => {
-  var changes = {}
-
-  if (configCompare.value === null) {
-    logDebug('pinia:getConfigChanges()', 'configState not saved')
-    return changes
-  }
-
-  for (var key in configCompare.value) {
-    // TODO: If there are nested structures they need to be handled here...
-
-    if (configCompare.value[key] != config[key]) {
-      changes[key] = config[key]
-    }
-  }
-
-  return changes
-}
-
 config.$subscribe(() => {
   if (!global.initialized) return
 
-  var changes = getConfigChanges()
+  var changes = _getConfigChanges(config)
   logDebug('pinia:$subscribe()', 'State change on configStore', changes)
 
   if (JSON.stringify(changes).length > 2) {
@@ -87,5 +47,6 @@ config.$subscribe(() => {
   }
 })
 
-// Export these for backward compatibility with code that might import from pinia.js
-export { saveConfigState, getConfigChanges }
+// Wrappers so callers don't need to pass the config argument
+export const saveConfigState = () => _saveConfigState(config)
+export const getConfigChanges = () => _getConfigChanges(config)
