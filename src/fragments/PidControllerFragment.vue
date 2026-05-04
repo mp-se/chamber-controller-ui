@@ -67,15 +67,22 @@
       <p class="text-center">
         Remote control is active, local control is disabled.
       </p>
+          <button
+            @click="disableRemoteControl"
+            type="button"
+            class="btn btn-primary"
+            :disabled="global.disabled"
+          >
+            Disable remote control
+          </button>
     </div>
   </div>  
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { validateCurrentForm, sharedHttpClient as http } from '@mp-se/espframework-ui-components'
+import { logDebug, logError, logInfo, validateCurrentForm, sharedHttpClient as http } from '@mp-se/espframework-ui-components'
 import { global, config, status } from '@/modules/pinia'
-import { logDebug, logError, logInfo } from '@mp-se/espframework-ui-components'
 import { storeToRefs } from 'pinia'
 
 const newMode = ref('o')
@@ -105,6 +112,23 @@ onMounted(() => {
     global.messageError = 'Neither cooling or heating is enabled, control is not possible'
   }
 })
+
+const disableRemoteControl = async () => {
+  global.clearMessages()
+  global.disabled = true
+
+  try {
+  const data = { new_mode: 'r' }
+    await http.postJson('api/remote', data)
+    global.disabled = false
+    logInfo('PidControllerFragment.disableRemoteControl()', 'Sending /api/remote completed')
+    return true
+  } catch (err) {
+    logError('PidControllerFragment.disableRemoteControl()', err)
+    global.disabled = false
+    return false
+  }
+}
 
 const saveSettings = async () => {
   try {
