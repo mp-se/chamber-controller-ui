@@ -99,7 +99,7 @@
   <BsFooter
     v-if="global.initialized"
     :text="
-      '(c) 2024-2025 Magnus Persson, ui version ' + global.uiVersion + ' (' + global.uiBuild + ')'
+      '(c) 2024-2026 Magnus Persson, ui version ' + global.uiVersion + ' (' + global.uiBuild + ')'
     "
   />
 </template>

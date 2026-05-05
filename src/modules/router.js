@@ -34,6 +34,7 @@ import FirmwareView from '@/views/FirmwareView.vue'
 import SupportView from '@/views/SupportView.vue'
 import SerialView from '@/views/SerialView.vue'
 import ToolsView from '@/views/ToolsView.vue'
+import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
 const routes = [
@@ -96,6 +97,11 @@ const routes = [
     path: '/other/serial',
     name: 'serial',
     component: SerialView
+  },
+  {
+    path: '/other/about',
+    name: 'about',
+    component: AboutView
   },
   {
     path: '/:catchAll(.*)',
@@ -193,7 +199,11 @@ const items = ref([
       {
         label: 'Tools',
         path: '/other/tools'
-      }
+      },
+      {
+        label: 'About',
+        path: '/other/about'
+      }      
     ]
   }
 ])
