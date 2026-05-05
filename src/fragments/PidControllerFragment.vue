@@ -93,7 +93,7 @@ const modeOptions = ref([{ label: 'Off', value: 'o' }])
 const { pid_mode } = storeToRefs(status)
 
 watch(pid_mode, () => {
-  newMode.value = pid_mode
+  newMode.value = pid_mode.value
 })
 
 onMounted(() => {
